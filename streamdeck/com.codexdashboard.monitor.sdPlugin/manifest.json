@@ -1,0 +1,21 @@
+{
+ "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+ "UUID": "com.codexdashboard.monitor",
+ "Name": "Codex Dashboard",
+ "Description": "Quota Codex disponibile su 5 ore e settimana, aggiornata automaticamente.",
+ "Author": "CodexDashboard",
+ "Version": "1.0.0.0",
+ "SDKVersion": 2,
+ "CodePath": "CodexDashboard.exe",
+ "CodePathWin": "CodexDashboard.exe",
+ "Icon": "images/icon",
+ "Category": "Codex Dashboard",
+ "CategoryIcon": "images/icon",
+ "OS": [{"Platform": "windows", "MinimumVersion": "10"}],
+ "Software": {"MinimumVersion": "6.6"},
+ "Actions": [
+  {"UUID":"com.codexdashboard.monitor.short","Name":"Quota 5 ore","Icon":"images/icon","Tooltip":"Percentuale disponibile nelle 5 ore. Premi per aggiornare.","Controllers":["Keypad"],"UserTitleEnabled":false,"States":[{"Image":"images/icon","TitleAlignment":"middle"}]},
+  {"UUID":"com.codexdashboard.monitor.weekly","Name":"Quota settimana","Icon":"images/icon","Tooltip":"Percentuale disponibile nella settimana. Premi per aggiornare.","Controllers":["Keypad"],"UserTitleEnabled":false,"States":[{"Image":"images/icon","TitleAlignment":"middle"}]},
+  {"UUID":"com.codexdashboard.monitor.open","Name":"Apri widget","Icon":"images/icon","Tooltip":"Apri o porta in primo piano Codex Dashboard.","Controllers":["Keypad"],"UserTitleEnabled":false,"States":[{"Image":"images/icon","TitleAlignment":"middle"}]}
+ ]
+}
