@@ -1,0 +1,12 @@
+{
+  "name": "Night City HUD",
+  "inspiration": "Cyberpunk 2077",
+  "yellow": "#F3E600",
+  "cyan": "#55EAD4",
+  "background": "#000000",
+  "track": "#880425",
+  "muted": "#55EAD4",
+  "alert": "#C5003C",
+  "hover": "#880425",
+  "font": "Bahnschrift"
+}

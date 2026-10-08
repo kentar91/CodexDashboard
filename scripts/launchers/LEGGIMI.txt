@@ -1,0 +1,25 @@
+CODEX DASHBOARD
+
+Apri CodexDashboard.exe oppure Avvia-CodexDashboard.vbs in questa cartella.
+Impostazioni: tasto destro sul widget o menu dell'icona vicino all'orologio.
+Puoi anche aprire Impostazioni-CodexDashboard.vbs.
+
+Configuratore: dimensione, opacita', primo piano, posizione, avvio automatico,
+frequenza, soglia, notifiche e lingua Italiano/English.
+Applica salva senza chiudere; Salva applica e chiude.
+Annulla scarta solo le modifiche non ancora applicate.
+La scelta quota disponibile/consumata vale anche per il plugin aggiornato.
+
+Il plugin installabile e' in dist/streamdeck. Il kit logo e' in dist/branding.
+Sorgenti: src. Documentazione: README.md e docs. Prototipi: archive/prototypes.
+Anteprime e risultati dei test: build.
+
+Il programma usa il tuo accesso Codex, non invia prompt e non richiede chiavi API.
+
+ENGLISH
+Open CodexDashboard.exe. Right-click the widget for Settings.
+Choose English under Language, then Apply or Save.
+Apply keeps Settings open; Save applies and closes; Cancel discards pending edits.
+Quota history and About/diagnostics are available from the widget and tray menus.
+Select a key in Stream Deck to override language, quota mode and threshold.
+The complete bilingual installer is in dist/installer.

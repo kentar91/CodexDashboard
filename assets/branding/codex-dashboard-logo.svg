@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="480" viewBox="0 0 1440 480">
+ <title>Codex Dashboard — logo completo</title>
+ <g transform="translate(0 0) scale(.9375)">
+  <path fill="#F3E600" d="M76 120 116 80H240L276 116 240 152H150L124 178V334L150 360H240L276 396 240 432H116L76 392Z"/>
+  <path fill="#55EAD4" fill-rule="evenodd" d="M284 80H360L436 156V356L360 432H284ZM336 152V360H338L364 334V178L338 152Z"/>
+ </g>
+ <path fill="#55EAD4" d="M468 112H472V368H468Z"/>
+ <text x="528" y="230" fill="#F3E600" font-family="Bahnschrift,Arial,sans-serif" font-size="142" font-weight="700" letter-spacing="8">CODEX</text>
+ <text x="536" y="337" fill="#55EAD4" font-family="Bahnschrift,Arial,sans-serif" font-size="82" font-weight="600" letter-spacing="10">DASHBOARD</text>
+ <path fill="#F3E600" d="M536 369H1176L1192 385H536Z"/>
+</svg>

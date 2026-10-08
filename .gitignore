@@ -1,0 +1,5 @@
+# Compiled files, generated sources, previews and validation results
+/build/
+/dist/
+*.log
+*.tmp

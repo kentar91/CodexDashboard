@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="it"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Codex Dashboard</title>
+<style>
+:root{color-scheme:dark}body{background:#000;color:#55ead4;font:14px Bahnschrift,Arial,sans-serif;margin:18px;border-top:4px solid #f3e600}h1{color:#f3e600;font-size:20px}label{display:block;margin:18px 0 6px}select,input{box-sizing:border-box;width:100%;padding:8px;background:#000;color:#f3e600;border:1px solid #55ead4}small{display:block;margin-top:18px;line-height:1.5}output{color:#f3e600;display:block;margin-top:12px}
+</style>
+<h1>// CODEX DASHBOARD</h1>
+<label for="language" id="language-label">Lingua</label><select id="language"><option value="global">Impostazioni app</option><option value="it">Italiano</option><option value="en">English</option></select>
+<section id="quota"><label for="mode" id="mode-label">Percentuale mostrata</label><select id="mode"><option value="global">Impostazioni app</option><option value="available">Quota disponibile</option><option value="used">Quota consumata</option></select>
+<label for="threshold" id="threshold-label">Soglia quota bassa (%)</label><input id="threshold" type="number" min="1" max="50" placeholder="Impostazioni app"></section>
+<small id="help">Le modifiche si applicano solo a questo tasto. Lascia i valori predefiniti per seguire le impostazioni del programma.</small><output id="status"></output>
+<script>
+'use strict';let socket,context,action,settings={},globalLanguage='it';
+const el=id=>document.getElementById(id);
+function translate(){const en=(settings.language||'global')==='en'||settings.language!=='it'&&globalLanguage==='en';document.documentElement.lang=en?'en':'it';el('language-label').textContent=en?'Language':'Lingua';el('mode-label').textContent=en?'Displayed percentage':'Percentuale mostrata';el('threshold-label').textContent=en?'Low quota threshold (%)':'Soglia quota bassa (%)';el('language').options[0].text=el('mode').options[0].text=el('threshold').placeholder=en?'App settings':'Impostazioni app';el('mode').options[1].text=en?'Available quota':'Quota disponibile';el('mode').options[2].text=en?'Used quota':'Quota consumata';el('help').textContent=en?'Changes apply only to this key. Keep defaults to follow the app settings.':'Le modifiche si applicano solo a questo tasto. Lascia i valori predefiniti per seguire le impostazioni del programma.';}
+function fill(){el('language').value=settings.language||'global';el('mode').value=settings.mode||'global';el('threshold').value=settings.threshold||'';translate();}
+function send(event,payload){if(socket&&socket.readyState===1)socket.send(JSON.stringify({event,context,action,payload}));}
+function connectElgatoStreamDeckSocket(port,uuid,registerEvent,info,actionInfo){context=uuid;const data=JSON.parse(actionInfo);action=data.action;settings=data.payload.settings||{};globalLanguage=JSON.parse(info).application.language.startsWith('en')?'en':'it';el('quota').hidden=action.endsWith('.open');fill();socket=new WebSocket('ws://127.0.0.1:'+port);socket.onopen=()=>{socket.send(JSON.stringify({event:registerEvent,uuid}));send('sendToPlugin',{request:'defaults'});};socket.onmessage=e=>{const m=JSON.parse(e.data);if(m.event==='didReceiveSettings'){settings=m.payload.settings||{};fill();}if(m.event==='sendToPropertyInspector'){globalLanguage=m.payload.language||'it';translate();}};}
+for(const id of ['language','mode','threshold'])el(id).addEventListener('change',()=>{if(!el('threshold').checkValidity()){el('threshold').reportValidity();return;}settings={...settings,language:el('language').value,mode:el('mode').value,threshold:el('threshold').value};send('setSettings',settings);translate();});
+</script></html>

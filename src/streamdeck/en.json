@@ -1,0 +1,7 @@
+{
+ "Name":"Codex Dashboard",
+ "Description":"Codex five-hour and weekly quotas, refreshed automatically.",
+ "com.codexdashboard.monitor.short":{"Name":"5-hour quota","Tooltip":"Available five-hour quota. Press to refresh."},
+ "com.codexdashboard.monitor.weekly":{"Name":"Weekly quota","Tooltip":"Available weekly quota. Press to refresh."},
+ "com.codexdashboard.monitor.open":{"Name":"Open Codex Dashboard","Tooltip":"Open or bring Codex Dashboard to the foreground."}
+}
