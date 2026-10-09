@@ -1,5 +1,7 @@
 # Indicazioni del progetto
 
+L'identità pubblica dell'autore è **Kentar — k3ntarlab**. L'account GitHub è kentar91. Usare questa attribuzione nella documentazione e nei materiali pubblici, in italiano e inglese.
+
 ## Italiano e inglese
 
 Ogni aggiornamento del software deve mantenere il supporto completo a italiano e inglese. Quando cambiano funzionalità, comportamenti o testi, aggiornare insieme entrambe le lingue nell'interfaccia (widget, menu, configuratore, diagnostica, installer e Stream Deck), nella documentazione e nei materiali distribuiti. Conservare i collegamenti fra le versioni linguistiche e includere le guide inglesi nei prodotti generati. Per le parti interessate verificare entrambe le lingue, comprese leggibilità, layout e corrispondenza delle istruzioni al comportamento corrente. La doppia lingua è un requisito di ogni aggiornamento, non un'attività da rimandare a una versione successiva.

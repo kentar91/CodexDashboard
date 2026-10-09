@@ -4,7 +4,7 @@
 
 Widget Windows e plugin Stream Deck per leggere le quote Codex. Tema Cyberpunk 2077, logo CD, colori condivisi, configuratore integrato.
 
-Creato da **Marco (kentar91)**. Distribuito con [licenza MIT](../LICENSE). Per proporre una modifica o segnalare un problema, apri una [issue su GitHub](https://github.com/kentar91/CodexDashboard/issues). Progetto indipendente, non affiliato a OpenAI, Elgato o CD PROJEKT RED.
+Creato da **Kentar — k3ntarlab (GitHub: kentar91)**. Distribuito con [licenza MIT](../LICENSE). Per proporre una modifica o segnalare un problema, apri una [issue su GitHub](https://github.com/kentar91/CodexDashboard/issues). Progetto indipendente, non affiliato a OpenAI, Elgato o CD PROJEKT RED.
 
 ## Avvio rapido
 

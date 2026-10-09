@@ -16,7 +16,7 @@ I created Codex Dashboard for a practical reason: while working with Codex, I wa
 
 The idea is to bring this status directly to my workspace: a small widget visible while I work and, for Stream Deck users, large percentages on physical keys. Thresholds and history help track quota changes and plan work around the next renewal.
 
-— **Marco (kentar91), project creator**
+— **Kentar — k3ntarlab (GitHub: kentar91), project creator**
 
 > **Quotas and tokens:** version 2.0.7 displays subscription quota percentages reported by Codex. It does not show exact consumed token counts, tokens for an individual conversation or API costs. Percentages are not converted into token counts.
 
@@ -90,4 +90,4 @@ To request a change, open an [issue](https://github.com/kentar91/CodexDashboard/
 
 ## Author and license
 
-Created and maintained by **Marco ([kentar91](https://github.com/kentar91))**. Codex Dashboard is distributed under the [MIT license](LICENSE), whose copyright notice must be retained in copies and distributions.
+Created and maintained by **Kentar — k3ntarlab ([kentar91](https://github.com/kentar91))**. Codex Dashboard is distributed under the [MIT license](LICENSE), whose copyright notice must be retained in copies and distributions.

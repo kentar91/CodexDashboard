@@ -4,7 +4,7 @@
 
 Windows widget and Stream Deck plugin for monitoring Codex quotas. Cyberpunk 2077 theme, original CD logo, shared colors and built-in settings.
 
-Created by **Marco (kentar91)**. Distributed under the [MIT license](../LICENSE). To request a change or report a problem, open a [GitHub issue](https://github.com/kentar91/CodexDashboard/issues). Independent project, not affiliated with OpenAI, Elgato or CD PROJEKT RED.
+Created by **Kentar — k3ntarlab (GitHub: kentar91)**. Distributed under the [MIT license](../LICENSE). To request a change or report a problem, open a [GitHub issue](https://github.com/kentar91/CodexDashboard/issues). Independent project, not affiliated with OpenAI, Elgato or CD PROJEKT RED.
 
 ## Quick start
 

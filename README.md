@@ -16,7 +16,7 @@ Ho creato Codex Dashboard per un'esigenza pratica: mentre lavoro con Codex, vogl
 
 L'idea è portare questo stato direttamente sulla scrivania: un piccolo widget visibile mentre lavoro e, per chi usa Stream Deck, percentuali grandi sui tasti fisici. Le soglie e lo storico aiutano a seguire l'andamento delle quote e a organizzare il lavoro in vista del prossimo rinnovo.
 
-— **Marco (kentar91), creatore del progetto**
+— **Kentar — k3ntarlab (GitHub: kentar91), creatore del progetto**
 
 > **Quote e token:** la versione 2.0.7 visualizza le percentuali delle quote dell'abbonamento riportate da Codex. Non mostra il numero esatto di token consumati, i token di una singola conversazione o i costi API. Le percentuali non sono convertite in un conteggio di token.
 
@@ -90,4 +90,4 @@ Per chiedere una modifica, apri una [issue](https://github.com/kentar91/CodexDas
 
 ## Autore e licenza
 
-Creato e mantenuto da **Marco ([kentar91](https://github.com/kentar91))**. Codex Dashboard è distribuito con [licenza MIT](LICENSE), con avviso di copyright da conservare nelle copie e nelle distribuzioni.
+Creato e mantenuto da **Kentar — k3ntarlab ([kentar91](https://github.com/kentar91))**. Codex Dashboard è distribuito con [licenza MIT](LICENSE), con avviso di copyright da conservare nelle copie e nelle distribuzioni.
