@@ -11,8 +11,10 @@ if($LASTEXITCODE -ne 0){throw 'Stream Deck validation failed.'}
 & (Join-Path $root 'tests/full-close-smoke.ps1')
 $app=Join-Path $root 'dist/app'
 New-Item -ItemType Directory -Force (Join-Path $app 'docs'),(Join-Path $app 'assets/branding') | Out-Null
-foreach($name in 'README.md','README.en.md','LICENSE'){Copy-Item -LiteralPath (Join-Path $root $name) -Destination $app -Force}
-Copy-Item -Path (Join-Path $root 'docs/*.md') -Destination (Join-Path $app 'docs') -Force
+foreach($name in 'README.md','README.en.md','CONTRIBUTING.md','CONTRIBUTING.en.md','LICENSE'){Copy-Item -LiteralPath (Join-Path $root $name) -Destination $app -Force}
+Copy-Item -Path (Join-Path $root 'docs/*') -Destination (Join-Path $app 'docs') -Recurse -Force
+Copy-Item -LiteralPath (Join-Path $root 'assets/theme.json') -Destination (Join-Path $app 'assets') -Force
+foreach($name in 'LEGGIMI.md','README.en.md'){Copy-Item -LiteralPath (Join-Path $root ('assets/branding/'+$name)) -Destination (Join-Path $app 'assets/branding') -Force}
 Copy-Item -LiteralPath (Join-Path $root 'assets/branding/codex-dashboard-logo-dark.png') -Destination (Join-Path $app 'assets/branding') -Force
 $release=Join-Path $root 'dist/release'
 New-Item -ItemType Directory -Force $release | Out-Null

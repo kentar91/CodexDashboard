@@ -2,23 +2,57 @@
 
 [Italiano](README.md) · [English](README.en.md)
 
-![Codex Dashboard](assets/branding/codex-dashboard-logo-dark.png)
+<p><img src="assets/branding/codex-dashboard-logo-dark.png" alt="Codex Dashboard" width="400"></p>
 
-**Codex quotas within reach, on your desktop and Stream Deck.**
+**Keep Codex quotas visible, on your desktop and Stream Deck.**
 
-Codex Dashboard is a Windows widget and Stream Deck plugin displaying available five-hour and weekly Codex quotas. See how much usage remains and when it renews at a glance, without interrupting your work to look up these details.
+Free, open-source Windows widget for five-hour and weekly quotas: percentages, renewal times, thresholds and local history. Stream Deck is optional.
 
-[Download the current version](https://github.com/kentar91/CodexDashboard/releases/latest) · [Complete guide](docs/USER_GUIDE.en.md) · [Report a problem or request a change](https://github.com/kentar91/CodexDashboard/issues)
+**[Download the 2.0.7 installer](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/CodexDashboard-Setup-2.0.7.exe)** · [All downloads](https://github.com/kentar91/CodexDashboard/releases/tag/v2.0.7) · [User guide](docs/USER_GUIDE.en.md)
 
-## Why I built this tool
+**Windows 10/11 x64 · .NET Framework 4.8 · Codex installed and signed in.** No API key required. Optional plugin for Stream Deck 6.6+.
 
-I created Codex Dashboard for a practical reason: while working with Codex, I want to keep an eye on usage and know how much capacity I have left. Looking up that information repeatedly breaks my flow, especially during long sessions or when switching between several windows.
+> Displays **Codex subscription quota percentages**, not exact token counts or API costs. Independent project, not affiliated with OpenAI, Elgato or CD PROJEKT RED.
 
-The idea is to bring this status directly to my workspace: a small widget visible while I work and, for Stream Deck users, large percentages on physical keys. Thresholds and history help track quota changes and plan work around the next renewal.
+## See it in action
 
-— **Kentar — k3ntarlab (GitHub: kentar91), project creator**
+Desktop widget, with quotas read from Codex:
 
-> **Quotas and tokens:** version 2.0.7 displays subscription quota percentages reported by Codex. It does not show exact consumed token counts, tokens for an individual conversation or API costs. Percentages are not converted into token counts.
+<p><img src="docs/screenshots/widget-en.png" alt="Codex Dashboard desktop widget" width="440"></p>
+
+Previews of the images sent to Stream Deck keys:
+
+<p><img src="docs/screenshots/key-short-en.png" alt="5-hour quota" width="144"> <img src="docs/screenshots/key-weekly-en.png" alt="Weekly quota" width="144"> <img src="docs/screenshots/key-open-en.png" alt="Open widget" width="144"></p>
+
+Percentages in the images are examples and change with usage.
+
+<details>
+<summary>Settings: language, appearance, position, thresholds and startup</summary>
+
+<img src="docs/screenshots/settings-en.png" alt="English settings window" width="400">
+
+</details>
+
+## Which file should I download?
+
+| Download | When to use it |
+| --- | --- |
+| [Installer — recommended](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/CodexDashboard-Setup-2.0.7.exe) | Install or update the app, plugin or both; can create shortcuts. |
+| [Portable ZIP](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/CodexDashboard-2.0.7-windows-x64.zip) | Extract everything and run `CodexDashboard.exe`, without setup. Not needed if you use the installer. |
+| [Stream Deck plugin only](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/com.codexdashboard.monitor.streamDeckPlugin) | Open the package and confirm the import in Elgato. |
+
+Additional downloads: [logo kit](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/CodexDashboard-logo-kit.zip) · [SHA256SUMS.txt](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/SHA256SUMS.txt).
+
+Executables are **not digitally signed**. Checksums verify file integrity. GitHub’s **Source code** archives contain sources that require building: choose a download above to run the app immediately.
+
+## First launch
+
+1. Run setup and choose Italiano or English, then the components to install.
+2. Launch **Codex Dashboard** using the shortcut created by the installer.
+3. Open **Settings** by right-clicking the widget or using the tray menu.
+4. If you use Stream Deck, confirm the import and add the three actions to keys.
+
+Automatic startup and notifications are initially disabled. The widget works on its own; the plugin works with the widget closed. [Full instructions](docs/USER_GUIDE.en.md).
 
 ## Features
 
@@ -35,61 +69,32 @@ The idea is to bring this status directly to my workspace: a small widget visibl
 
 The HUD style is inspired by the Cyberpunk 2077 palette, with original artwork and readable percentages. This is an independent project, not affiliated with OpenAI, Elgato or CD PROJEKT RED.
 
-## Installation
+## Data, compatibility and limits
 
-**[Download the 2.0.7 installer directly](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/CodexDashboard-Setup-2.0.7.exe)** · [All milestone downloads](https://github.com/kentar91/CodexDashboard/releases/tag/v2.0.7)
+The app reads quotas through `codex app-server`. It sends no prompts, does not read or copy authentication files, and does not spend reset credits. Settings and history stay in `%LOCALAPPDATA%/CodexDashboard`; uninstalling retains them. Review diagnostic details before posting them.
 
-**Requirements:** Windows 10/11 x64, .NET Framework 4.8 and Codex installed and signed in with ChatGPT. The plugin requires Stream Deck 6.6 or later. API keys, Node.js and Python are not required to use the app.
+This milestone is for Windows; automatic online updates and Stream Deck+ dials are not supported. The connection depends on quota availability in the Codex app-server. Automated tests and live quota reading have been verified; physical hardware, different DPI and real reboot checks remain listed in the [verification notes](docs/VERIFICATION.en.md).
 
-1. Open the [releases page](https://github.com/kentar91/CodexDashboard/releases/latest).
-2. Download `CodexDashboard-Setup-2.0.7.exe` and choose your language.
-3. Select the app only, Stream Deck plugin only, or both.
-4. Launch the app and open **Settings** by right-clicking the widget or using the tray icon menu.
-
-For portable use, extract `CodexDashboard-2.0.7-windows-x64.zip` and open `CodexDashboard.exe`. To install only the plugin, open `com.codexdashboard.monitor.streamDeckPlugin` and confirm import in the Elgato app. The logo kit is available as a separate download.
-
-The milestone executables are not digitally signed. The release includes `SHA256SUMS.txt` to verify downloaded file integrity. The `build` and `dist` folders are generated locally and are not included in the GitHub source repository.
-
-## Getting started
-
-The widget reads quotas through the Codex sign-in already present on your computer. Yellow identifies the five-hour quota, turquoise the weekly quota. Hover over quotas to see renewal times in Europe/Rome. Missing data appears as `—`; `!` and `OFFLINE` indicate previous data or an unavailable connection.
-
-Settings let you select language, available or used percentages, monitor, position, thresholds and refresh frequency. **Apply** saves without closing; **Save** applies and closes; **Cancel** discards changes that have not been applied. Automatic startup and notifications are initially disabled.
-
-In Stream Deck, add the five-hour quota, weekly quota and open-widget actions. Press a quota key to refresh. Each key can follow app settings or use its own language, display mode and threshold. The plugin also works with the widget closed.
-
-## Data and privacy
-
-The app reads quotas through `codex app-server`. It sends no prompts, does not read or copy authentication files, and does not spend reset credits. Settings and history stay locally in `%LOCALAPPDATA%/CodexDashboard`; uninstalling preserves them.
-
-History records no authentication data. Diagnostic export contains settings, quotas and the last connection error, without credentials. Before attaching it to a public issue, review the information you want to share.
-
-## Documentation
+## Documentation and contributions
 
 | Topic | Italiano | English |
 | --- | --- | --- |
-| Usage, configuration and building | [Guida utente](docs/GUIDA.md) | [User guide](docs/USER_GUIDE.en.md) |
-| Source organization | [Struttura](docs/STRUTTURA.md) | [Project structure](docs/STRUCTURE.en.md) |
-| Palette and visual rules | [Design](docs/DESIGN.md) | [Design guidelines](docs/DESIGN.en.md) |
-| Tests and real hardware checks | [Verifiche](docs/VERIFICHE.md) | [Verification](docs/VERIFICATION.en.md) |
-| Logo usage and sources | [Kit logo](assets/branding/LEGGIMI.md) | [Logo kit](assets/branding/README.en.md) |
+| Using the app | [Guida utente](docs/GUIDA.md) | [User guide](docs/USER_GUIDE.en.md) |
+| Building and packaging | [Sviluppo](docs/SVILUPPO.md) | [Development](docs/DEVELOPMENT.en.md) |
+| Source layout | [Struttura](docs/STRUTTURA.md) | [Structure](docs/STRUCTURE.en.md) |
+| Theme and graphics | [Design](docs/DESIGN.md) | [Design](docs/DESIGN.en.md) |
+| Tests and limits | [Verifiche](docs/VERIFICHE.md) | [Verification](docs/VERIFICATION.en.md) |
 
-## Frequently asked questions
+For problems or ideas, use the [issue templates](https://github.com/kentar91/CodexDashboard/issues/new/choose). To contribute, see [CONTRIBUTING.en.md](CONTRIBUTING.en.md). Italian and English are both welcome.
 
-**Do I need Stream Deck?** No. The widget works on its own; the plugin is optional.
+## Why I built this tool
 
-**Why do I see OFFLINE?** Check that Codex is installed and signed in, that the connection is available, and try refreshing. When reporting the issue, include the app version, Windows version and diagnostic message.
+I created Codex Dashboard for a practical reason: while working with Codex, I want to keep an eye on usage and know how much capacity I have left. Looking up that information repeatedly breaks my flow, especially during long sessions or when switching between several windows.
 
-**How do I update?** Download the installer from the releases page. App and plugin are supplied at the same version; plugin import requires confirmation in Elgato. Automatic online updates are not implemented yet.
+The idea is to bring this status directly to my workspace: a small widget visible while I work and, for Stream Deck users, large percentages on physical keys. Thresholds and history help track quota changes and plan work around the next renewal.
 
-**Can I see costs and exact token counts?** This milestone displays percentage quotas and quota history. API costs and token counts are not included.
-
-## Development and requests
-
-To build, close the widget and Settings, then run `./build.ps1` in PowerShell from the project folder. For the Stream Deck package and installer, use `./build.ps1 -Installer -StreamDeckCli <Elgato CLI path>`. See the guide for prerequisites and checks.
-
-To request a change, open an [issue](https://github.com/kentar91/CodexDashboard/issues) describing your need, desired behavior and an example use case. For problems, include reproduction steps and the expected result. Italian and English are both welcome. Requests are reviewed by the author; every update must keep both languages aligned.
+— **Kentar — k3ntarlab (GitHub: kentar91), project creator**
 
 ## Author and license
 
-Created and maintained by **Kentar — k3ntarlab ([kentar91](https://github.com/kentar91))**. Codex Dashboard is distributed under the [MIT license](LICENSE), whose copyright notice must be retained in copies and distributions.
+Created and maintained by **Kentar — k3ntarlab ([kentar91](https://github.com/kentar91))**. [MIT](LICENSE).

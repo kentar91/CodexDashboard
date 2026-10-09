@@ -6,17 +6,28 @@ Windows widget and Stream Deck plugin for monitoring Codex quotas. Cyberpunk 207
 
 Created by **Kentar — k3ntarlab (GitHub: kentar91)**. Distributed under the [MIT license](../LICENSE). To request a change or report a problem, open a [GitHub issue](https://github.com/kentar91/CodexDashboard/issues). Independent project, not affiliated with OpenAI, Elgato or CD PROJEKT RED.
 
-## Quick start
+## Installation and first launch
 
-Download ready-to-use packages from the [releases page](https://github.com/kentar91/CodexDashboard/releases/latest). To install, use `CodexDashboard-Setup-2.0.7.exe`; for portable use, extract `CodexDashboard-2.0.7-windows-x64.zip` and open `CodexDashboard.exe`. The `dist` folders described below are generated locally and are not included in the source repository.
+Requires Windows 10/11 x64, .NET Framework 4.8 and Codex installed and signed in with ChatGPT. API keys, Node.js and Python are not required to use the app. Stream Deck is optional; the plugin requires Elgato's app version 6.6 or later.
 
-- Double-click **Avvia-CodexDashboard.vbs** in the project root, or **dist/app/CodexDashboard.exe**.
-- To configure: right-click the widget → **Settings**, use the tray icon menu, or open **dist/app/Impostazioni-CodexDashboard.vbs**.
-- For Stream Deck: double-click **dist/streamdeck/com.codexdashboard.monitor.streamDeckPlugin** to install it.
-- For the logo: **dist/branding/CodexDashboard-logo-kit.zip**. Editable files are in **assets/branding**.
-- To install or update: **dist/installer/CodexDashboard-Setup-2.0.7.exe**. Choose Italiano or English, then app only, Stream Deck plugin only, or both. Installation is per user; shortcuts are created only for the app. An existing component that is not selected is retained. The plugin package opens in the Elgato app for import confirmation.
+1. Download [CodexDashboard-Setup-2.0.7.exe](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/CodexDashboard-Setup-2.0.7.exe).
+2. Choose Italiano or English, then the app only, Stream Deck plugin only, or both.
+3. For the app, launch **Codex Dashboard** using the shortcut created by the installer. For the plugin, confirm the import in Elgato's app.
+4. Open **Settings** by right-clicking the widget or using the tray icon menu.
 
-Requires Windows 10/11 x64, .NET Framework 4.8 and an installed Codex app already signed in with ChatGPT. Running the app does not require Node.js, Python or API keys. The plugin requires Stream Deck 6.6 or later and works with the widget closed.
+Installation is per user. An existing component that is not selected is retained. Installing only the plugin does not create an app shortcut.
+
+### Portable use and plugin only
+
+For portable use, download the [Windows x64 ZIP](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/CodexDashboard-2.0.7-windows-x64.zip), extract it completely into a folder and open `CodexDashboard.exe`. The `.vbs` launchers in the extracted folder are optional. The ZIP does not automatically install the Stream Deck plugin.
+
+For Stream Deck only, download the [plugin package](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/com.codexdashboard.monitor.streamDeckPlugin), double-click it and confirm the import in Elgato. The plugin works with the widget closed.
+
+### Updating and uninstalling
+
+To update, download and run the current release's setup; confirm the new import in Stream Deck. Automatic online updates are not implemented. Remove the app using Windows uninstall; remove the plugin using the Stream Deck app. Personal settings and history are retained.
+
+Executables are not digitally signed. [SHA-256 checksums](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/SHA256SUMS.txt) let you verify download integrity. **Download ZIP** and **Download source code** are different: GitHub's generated source archives require building. The `build` and `dist` paths are for developers, covered in the [development guide](DEVELOPMENT.en.md).
 
 ## Settings
 
@@ -42,48 +53,12 @@ Select a key in the Stream Deck app to customize language, available/used percen
 
 Widget and tray menus provide quota history and about/diagnostics. History has separate 5-hour and weekly charts, filtered to the last 24 hours or 7 days. Axes show available percentage and Europe/Rome time; the plotted period runs from the first to the last collected sample, with values on hover. Features include CSV export, version, account plan, last update, offline status and JSON export. History retains up to 30 days and records no authentication data. Diagnostic export contains settings, quotas and the last connection error, without credentials.
 
-Install update opens a complete installer downloaded by the user. The package updates app and plugin to the same version; Stream Deck import requires confirmation in the Elgato app. A public channel for automatic online updates is not yet available. Uninstalling retains settings and history; remove the Elgato plugin through the Stream Deck app.
+Install update opens a complete installer downloaded by the user. The package updates app and plugin to the same version; Stream Deck import requires confirmation in the Elgato app. Automatic online updates are not implemented. Uninstalling retains settings and history; remove the Elgato plugin through the Stream Deck app.
 
 Yellow identifies the short quota; turquoise identifies the weekly quota. Percentages and bars turn red at the configured threshold for each quota. Thresholds and notifications allows separate 5-hour and weekly thresholds (1–50% available), even when displaying used quota. Existing settings initialize both thresholds from the old value. Stream Deck keys follow their quota's threshold unless overridden per key. `!` and `OFFLINE` indicate previous data or a missing connection; `—` indicates unavailable data. Notifications do not repeat until quota rises and then falls again. Reconnection occurs after 15 seconds; reads time out after 25 seconds.
 
-## Folders
+## Privacy and support
 
-| Folder | Contents |
-| --- | --- |
-| `src` | App, settings, layout and Stream Deck manifest |
-| `assets` | Shared theme and official SVG/PNG/ICO logo |
-| `docs` | Documentation and visual guidelines |
-| `scripts` | Build, logo export and launcher templates |
-| `tests` | Automated checks |
-| `build` | Compiled plugin, generated sources, previews and test results |
-| `dist` | Ready-to-use app, plugin, installer and logo kit |
+The app reads quotas through Codex, sends no prompts, does not read or copy authentication files, and does not spend reset credits. It displays subscription quota percentages, not token counts or API costs. Review diagnostic details before sharing them publicly.
 
-See [project structure](STRUCTURE.en.md), [design guidelines](DESIGN.en.md) and [palette](../assets/theme.json).
-
-## Building and packaging
-
-Close the widget and Settings. Run **build.ps1** from the project root: it calls `scripts/build.ps1` and recreates the app, compiled plugin and logo ZIP. The .NET compiler is provided by Windows; exported graphics are included in the project.
-
-To regenerate the Stream Deck installation package, use `build.ps1 -Package` with the official Elgato CLI available, or `build.ps1 -Package -StreamDeckCli <CLI path>`. The source manifest is `src/streamdeck/manifest.json`; do not edit the generated copy in `build/streamdeck`.
-
-`build.ps1 -Installer -StreamDeckCli <CLI path>` also creates the bilingual Windows installer containing app, icon and Stream Deck package from the same build.
-
-Logo sources are in `assets/branding`; `scripts/export-brand.cjs` regenerates PNG and ICO files with Sharp. The kit includes the transparent symbol, full wordmark, HUD icon, monochrome variants and Windows icons from 16 to 256 pixels.
-
-## Verification
-
-To save checks inside the project, set `CODEXDASHBOARD_ARTIFACT_DIR` to an absolute path to `build/reports` or `build/previews`. Otherwise, results go to `%LOCALAPPDATA%/CodexDashboard/diagnostics`.
-
-The app exposes `--self-test`, `--settings-test`, `--verify`, `--preview`, `--config-preview` and `--deck-preview`. These check quota conversion, settings, resizing, alerts, the live connection and previews. Settings tests use a separate folder without changing Windows startup.
-
-`tests/streamdeck-smoke.cjs` simulates the Stream Deck connection and checks registration, three 144 × 144 PNG images and the refresh command. Results go to `build/reports`.
-
-`tests/release-smoke.ps1` also checks Apply/Save/Cancel, language, startup modes, scaling, history, per-key settings and matching installer resources. Checks requiring real devices and workstations are listed in [verification notes](VERIFICATION.en.md). English action-list labels follow [Elgato localization](https://docs.elgato.com/streamdeck/sdk/guides/i18n/); keys and their settings follow the app language or the per-key choice.
-
-## Data
-
-Uses `codex app-server --listen stdio://`, the initialize/initialized handshake, `account/rateLimits/read` and `account/rateLimits/updated` notifications. The `codex` bucket takes precedence over the legacy result. The app sends no prompts, does not read or copy authentication files, and does not spend reset credits. The plugin communicates with Stream Deck through a local WebSocket.
-
-This version shows subscription quotas and their history; it does not include costs or token history. Data comes from periodic reads and Codex updates.
-
-References: [Codex App Server](https://learn.chatgpt.com/docs/app-server), [Stream Deck manifest](https://docs.elgato.com/streamdeck/sdk/references/manifest/), [Stream Deck WebSocket](https://docs.elgato.com/streamdeck/sdk/references/websocket/plugin/).
+For problems or requests, use the [issue templates](https://github.com/kentar91/CodexDashboard/issues/new/choose). For building and checks, see [Development](DEVELOPMENT.en.md) and [Verification](VERIFICATION.en.md).
