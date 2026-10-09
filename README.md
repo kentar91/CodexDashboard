@@ -37,6 +37,8 @@ Lo stile HUD è ispirato alla palette di Cyberpunk 2077, con grafica originale e
 
 ## Installazione
 
+**[Scarica direttamente l’installer 2.0.7](https://github.com/kentar91/CodexDashboard/releases/download/v2.0.7/CodexDashboard-Setup-2.0.7.exe)** · [Tutti i pacchetti della milestone](https://github.com/kentar91/CodexDashboard/releases/tag/v2.0.7)
+
 **Requisiti:** Windows 10/11 x64, .NET Framework 4.8 e Codex installato con accesso ChatGPT già effettuato. Per il plugin serve Stream Deck 6.6 o superiore. Non servono chiavi API, Node.js o Python per usare l'app.
 
 1. Apri la [pagina delle release](https://github.com/kentar91/CodexDashboard/releases/latest).

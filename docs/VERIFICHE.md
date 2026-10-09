@@ -2,6 +2,8 @@
 
 [Italiano](VERIFICHE.md) · [English](VERIFICATION.en.md)
 
+Per preparare tutti gli asset di rilascio eseguire `./scripts/package-release.ps1` (richiede Node.js e la CLI ufficiale Elgato `streamdeck`; i percorsi possono essere passati con `-Node` e `-StreamDeckCli`). Lo script compila app, plugin e installer, valida il plugin, esegue i tre controlli di rilascio e genera `dist/release` con installer, plugin, kit logo, ZIP portatile e `SHA256SUMS.txt`. Lo ZIP include licenza corrente, README e guide complete in italiano e inglese. La pubblicazione su GitHub è un passaggio separato: il solo tag Git non carica i pacchetti.
+
 La versione 2.0.7 termina finestra, icona e processo quando la chiusura è impostata su Codex. `tests/full-close-smoke.ps1` avvia due processi reali con stato Codex simulato e verifica uscita completa e nuova istanza. In combinazione con l'avvio Codex, l'attività per utente `CodexDashboard-CodexStartup` avvia `--launch-with-codex` ogni 10 secondi: il comando termina subito se Codex non ha finestre aperte e non riapre il widget se esiste già un'istanza. Nessun monitor CodexDashboard resta attivo fra due sessioni. L'attività è rimossa scegliendo altre modalità o disinstallando.
 
 La versione 2.0.2 verifica anche i pulsanti del configuratore su una finestra alta 450 pixel, la scadenza del prossimo reset disponibile e il ciclo completo del monitor (`--lifecycle-test`). I processi desktop senza finestra non contano come Codex aperto.

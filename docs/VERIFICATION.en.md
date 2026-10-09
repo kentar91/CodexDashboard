@@ -2,6 +2,8 @@
 
 [Italiano](VERIFICHE.md) · English · [Main documentation](../README.en.md)
 
+To prepare all release assets, run `./scripts/package-release.ps1` (requires Node.js and the official Elgato `streamdeck` CLI; paths can be supplied with `-Node` and `-StreamDeckCli`). The script builds the app, plugin and installer, validates the plugin, runs the three release checks and generates `dist/release` with the installer, plugin, logo kit, portable ZIP and `SHA256SUMS.txt`. The ZIP includes the current license, README files and complete Italian and English guides. Publishing to GitHub is a separate step: creating a Git tag alone does not upload packages.
+
 Version 2.0.7 closes the window, tray icon and process when closing is tied to Codex. `tests/full-close-smoke.ps1` starts two real processes with simulated Codex state and checks complete exit and a new instance. Combined with Codex startup, the per-user `CodexDashboard-CodexStartup` task runs `--launch-with-codex` every 10 seconds: the command exits immediately if Codex has no open windows and does not reopen the widget if an instance already exists. No CodexDashboard monitor remains active between sessions. Choosing another mode or uninstalling removes the task.
 
 Checks introduced in version 2.0.2 also cover Settings buttons in a 450-pixel-high window, the next available reset expiry and the full monitor lifecycle (`--lifecycle-test`). Desktop processes without a window do not count as an open Codex app.
