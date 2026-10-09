@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $report = Join-Path $root ('build\reports\installer-components-' + [Guid]::NewGuid().ToString('N'))
-$setup = Join-Path $root 'dist\installer\CodexDashboard-Setup-2.0.1.exe'
+$setup = Join-Path $root 'dist\installer\CodexDashboard-Setup-2.0.7.exe'
 $sources = @{
  'CodexDashboard.exe' = 'dist\app\CodexDashboard.exe'
  'CodexDashboard.ico' = 'dist\app\CodexDashboard.ico'

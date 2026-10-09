@@ -12,4 +12,4 @@ I tasti Stream Deck riprendono direttamente il widget: cornice superiore sempre 
 
 La famiglia tipografica principale è Bahnschrift. I tasti Stream Deck sono immagini PNG da 144 × 144 pixel: il testo viene misurato, adattato ai margini e centrato prima di essere inviato. Le etichette sono brevi e maiuscole; il normale testo esplicativo rimane in italiano e leggibile. Mantenere le dimensioni ingrandite dei tasti Stream Deck.
 
-`build.ps1` genera i colori C# e il layout WPF dalla palette condivisa, e incorpora le esportazioni del logo ufficiale. Le modifiche al tema si applicano alla successiva compilazione. I file in `archive/prototypes` e il vecchio prototipo PowerShell sono materiale storico, non altre versioni dell'interfaccia corrente.
+`build.ps1` genera i colori C# e il layout WPF dalla palette condivisa, e incorpora le esportazioni del logo ufficiale. Le modifiche al tema si applicano alla successiva compilazione.

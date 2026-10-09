@@ -26,7 +26,7 @@ Copy-Item -LiteralPath (Join-Path $branding 'codex-dashboard-icon-72.png') -Dest
 Copy-Item -LiteralPath (Join-Path $branding 'codex-dashboard-icon-144.png') -Destination (Join-Path $plugin 'images\icon@2x.png') -Force
 $iconPath = Join-Path $root 'dist\app\CodexDashboard.ico'
 Copy-Item -LiteralPath (Join-Path $branding 'CodexDashboard.ico') -Destination $iconPath -Force
-& (Join-Path $framework 'csc.exe') /nologo /target:winexe /platform:x64 /optimize+ ('/out:'+(Join-Path $root 'dist\app\CodexDashboard.exe')) ('/win32icon:'+$iconPath) ('/resource:'+$iconPath+',Dashboard.ico') ('/resource:'+(Join-Path $branding 'codex-dashboard-icon-256.png')+',DashboardLogo.png') ('/resource:'+(Join-Path $root 'build\generated\Widget.generated.xaml')+',Widget.xaml') $refs (Join-Path $root 'src\CodexDashboard.cs') (Join-Path $root 'src\Settings.cs') (Join-Path $root 'src\Features.cs') (Join-Path $root 'build\generated\Theme.generated.cs')
+& (Join-Path $framework 'csc.exe') /nologo /target:winexe /platform:x64 /optimize+ ('/out:'+(Join-Path $root 'dist\app\CodexDashboard.exe')) ('/win32icon:'+$iconPath) ('/resource:'+$iconPath+',Dashboard.ico') ('/resource:'+(Join-Path $branding 'codex-dashboard-icon-256.png')+',DashboardLogo.png') ('/resource:'+(Join-Path $root 'build\generated\Widget.generated.xaml')+',Widget.xaml') $refs (Join-Path $root 'src\CodexDashboard.cs') (Join-Path $root 'src\Settings.cs') (Join-Path $root 'src\Features.cs') (Join-Path $root 'src\StartupTask.cs') (Join-Path $root 'build\generated\Theme.generated.cs')
 if ($LASTEXITCODE -ne 0) { throw 'Compilazione non riuscita.' }
 Copy-Item -LiteralPath (Join-Path $root 'dist\app\CodexDashboard.exe') -Destination (Join-Path $plugin 'CodexDashboard.exe') -Force
 Write-Output 'Creati programma e plugin con tema Night City HUD.'
@@ -42,8 +42,8 @@ if ($Package -or $Installer) {
 }
 if ($Installer) {
  New-Item -ItemType Directory -Path (Join-Path $root 'dist\installer') -Force | Out-Null
- $setup = Join-Path $root 'dist\installer\CodexDashboard-Setup-2.0.1.exe'
- & (Join-Path $framework 'csc.exe') /nologo /target:winexe /platform:x64 /optimize+ ('/out:'+$setup) ('/win32icon:'+$iconPath) ('/resource:'+$iconPath+',App.ico') ('/resource:'+(Join-Path $root 'dist\app\CodexDashboard.exe')+',App.exe') ('/resource:'+(Join-Path $root 'dist\streamdeck\com.codexdashboard.monitor.streamDeckPlugin')+',Plugin.streamDeckPlugin') $refs (Join-Path $root 'src\Installer.cs') (Join-Path $root 'build\generated\Theme.generated.cs')
+ $setup = Join-Path $root 'dist\installer\CodexDashboard-Setup-2.0.7.exe'
+ & (Join-Path $framework 'csc.exe') /nologo /target:winexe /platform:x64 /optimize+ ('/out:'+$setup) ('/win32icon:'+$iconPath) ('/resource:'+$iconPath+',App.ico') ('/resource:'+(Join-Path $root 'dist\app\CodexDashboard.exe')+',App.exe') ('/resource:'+(Join-Path $root 'dist\streamdeck\com.codexdashboard.monitor.streamDeckPlugin')+',Plugin.streamDeckPlugin') $refs (Join-Path $root 'src\Installer.cs') (Join-Path $root 'src\StartupTask.cs') (Join-Path $root 'build\generated\Theme.generated.cs')
  if ($LASTEXITCODE -ne 0) { throw 'Compilazione installatore non riuscita.' }
  Write-Output ('Creato installatore bilingue: '+$setup)
 }

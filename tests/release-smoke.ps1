@@ -6,7 +6,7 @@ New-Item -ItemType Directory -Path $report -Force|Out-Null
 $env:CODEXDASHBOARD_ARTIFACT_DIR=$report
 $registryPath='HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
 $before=(Get-ItemProperty -LiteralPath $registryPath -Name CodexDashboard -ErrorAction SilentlyContinue).CodexDashboard
-foreach($flag in '--self-test','--settings-test','--features-test','--placement-test','--lifecycle-test') {
+foreach($flag in '--self-test','--settings-test','--features-test','--placement-test','--lifecycle-test','--history-filter-test') {
  $process=Start-Process -FilePath (Join-Path $root 'dist\app\CodexDashboard.exe') -ArgumentList $flag -WindowStyle Hidden -PassThru
  if(-not $process.WaitForExit(40000)){throw "Timeout: $flag"}
  if($process.ExitCode -ne 0){throw "Failed: $flag"}
@@ -14,7 +14,7 @@ foreach($flag in '--self-test','--settings-test','--features-test','--placement-
 $after=(Get-ItemProperty -LiteralPath $registryPath -Name CodexDashboard -ErrorAction SilentlyContinue).CodexDashboard
 if($before -ne $after){throw 'Tests changed Windows startup settings.'}
 $extract=Join-Path $report ('installer-extract-'+[Guid]::NewGuid().ToString('N'))
-$setup=Join-Path $root 'dist\installer\CodexDashboard-Setup-2.0.1.exe'
+$setup=Join-Path $root 'dist\installer\CodexDashboard-Setup-2.0.7.exe'
 $process=Start-Process -FilePath $setup -ArgumentList @('--extract-test',('"'+$extract+'"')) -WindowStyle Hidden -Wait -PassThru
 if($process.ExitCode -ne 0){throw 'Installer extraction failed.'}
 foreach($pair in @(@('CodexDashboard.exe','dist\app\CodexDashboard.exe'),@('CodexDashboard.ico','dist\app\CodexDashboard.ico'),@('com.codexdashboard.monitor.streamDeckPlugin','dist\streamdeck\com.codexdashboard.monitor.streamDeckPlugin'))) {

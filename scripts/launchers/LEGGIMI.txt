@@ -11,7 +11,7 @@ Annulla scarta solo le modifiche non ancora applicate.
 La scelta quota disponibile/consumata vale anche per il plugin aggiornato.
 
 Il plugin installabile e' in dist/streamdeck. Il kit logo e' in dist/branding.
-Sorgenti: src. Documentazione: README.md e docs. Prototipi: archive/prototypes.
+Sorgenti: src. Documentazione: README.md e docs.
 Anteprime e risultati dei test: build.
 
 Il programma usa il tuo accesso Codex, non invia prompt e non richiede chiavi API.
