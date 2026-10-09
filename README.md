@@ -4,7 +4,11 @@
 
 Widget Windows e plugin Stream Deck per leggere le quote Codex. Tema Cyberpunk 2077, logo CD, colori condivisi, configuratore integrato.
 
+Creato da **Marco (kentar91)**. Distribuito con [licenza MIT](LICENSE). Per proporre una modifica o segnalare un problema, apri una [issue su GitHub](https://github.com/kentar91/CodexDashboard/issues). Progetto indipendente, non affiliato a OpenAI, Elgato o CD PROJEKT RED.
+
 ## Avvio rapido
+
+Scarica i pacchetti pronti dalla [pagina delle release](https://github.com/kentar91/CodexDashboard/releases/latest). Per l'installazione usa `CodexDashboard-Setup-2.0.7.exe`; per l'uso portatile estrai `CodexDashboard-2.0.7-windows-x64.zip` e apri `CodexDashboard.exe`. Le cartelle `dist` descritte sotto sono generate localmente e non sono incluse nel repository dei sorgenti.
 
 - Doppio clic su **Avvia-CodexDashboard.vbs** nella cartella principale, oppure su **dist/app/CodexDashboard.exe**.
 - Per configurare: tasto destro sul widget → **Impostazioni**, menu dell'icona vicino all'orologio oppure **dist/app/Impostazioni-CodexDashboard.vbs**.

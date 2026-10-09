@@ -1,4 +1,4 @@
-﻿param([string]$Node='C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe')
+param([string]$Node='node')
 $ErrorActionPreference='Stop'
 $root=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $report=Join-Path $root 'build\reports'

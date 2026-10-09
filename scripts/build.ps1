@@ -34,6 +34,7 @@ Write-Output 'Creati programma e plugin con tema Night City HUD.'
 foreach ($name in 'Avvia-CodexDashboard.vbs','Impostazioni-CodexDashboard.vbs','LEGGIMI.txt','README.en.txt') {
  Copy-Item -LiteralPath (Join-Path $root ('scripts\launchers\'+$name)) -Destination (Join-Path $root ('dist\app\'+$name)) -Force
 }
+Copy-Item -LiteralPath (Join-Path $root 'LICENSE') -Destination (Join-Path $root 'dist\app\LICENSE') -Force
 New-Item -ItemType Directory -Path (Join-Path $root 'dist\branding'),(Join-Path $root 'dist\streamdeck') -Force | Out-Null
 Compress-Archive -Path (Join-Path $branding '*') -DestinationPath (Join-Path $root 'dist\branding\CodexDashboard-logo-kit.zip') -Force
 if ($Package -or $Installer) {
