@@ -1,5 +1,7 @@
 # Struttura del progetto
 
+[Italiano](STRUTTURA.md) · [English](STRUCTURE.en.md)
+
 | Cartella | Contenuto |
 | --- | --- |
 | `src/` | Programma Windows, configuratore e layout WPF |

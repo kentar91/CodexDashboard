@@ -1,5 +1,7 @@
 CODEX DASHBOARD
 
+Guida completa in inglese: README.en.txt in questa cartella.
+
 Apri CodexDashboard.exe oppure Avvia-CodexDashboard.vbs in questa cartella.
 Impostazioni: tasto destro sul widget o menu dell'icona vicino all'orologio.
 Puoi anche aprire Impostazioni-CodexDashboard.vbs.

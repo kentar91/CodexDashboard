@@ -1,5 +1,7 @@
 # Logo Codex Dashboard
 
+[Italiano](LEGGIMI.md) · [English](README.en.md)
+
 Il monogramma originale **CD** riprende i tagli diagonali e la palette del progetto: C gialla `#F3E600`, D turchese `#55EAD4`. Il logo non usa loghi né caratteri proprietari del gioco Cyberpunk 2077.
 
 - `codex-dashboard-symbol.svg` e `.png`: simbolo su fondo trasparente, per materiali e interfacce.

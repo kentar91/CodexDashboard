@@ -1,5 +1,7 @@
 # Codex Dashboard
 
+[Italiano](README.md) · [English](README.en.md)
+
 Widget Windows e plugin Stream Deck per leggere le quote Codex. Tema Cyberpunk 2077, logo CD, colori condivisi, configuratore integrato.
 
 ## Avvio rapido
