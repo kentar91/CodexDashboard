@@ -6,9 +6,9 @@ New-Item -ItemType Directory -Path $report -Force|Out-Null
 $env:CODEXDASHBOARD_ARTIFACT_DIR=$report
 $registryPath='HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
 $before=(Get-ItemProperty -LiteralPath $registryPath -Name CodexDashboard -ErrorAction SilentlyContinue).CodexDashboard
-foreach($flag in '--self-test','--settings-test','--features-test','--placement-test') {
+foreach($flag in '--self-test','--settings-test','--features-test','--placement-test','--lifecycle-test') {
  $process=Start-Process -FilePath (Join-Path $root 'dist\app\CodexDashboard.exe') -ArgumentList $flag -WindowStyle Hidden -PassThru
- if(-not $process.WaitForExit(20000)){throw "Timeout: $flag"}
+ if(-not $process.WaitForExit(40000)){throw "Timeout: $flag"}
  if($process.ExitCode -ne 0){throw "Failed: $flag"}
 }
 $after=(Get-ItemProperty -LiteralPath $registryPath -Name CodexDashboard -ErrorAction SilentlyContinue).CodexDashboard

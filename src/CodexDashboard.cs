@@ -32,13 +32,15 @@ public class Quota {
  public string ResetText {get { if(!Reset.HasValue) return L.T("Rinnovo non disponibile"); try { var zone=TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time"); return L.T("Si rinnova ")+TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeSeconds(Reset.Value),zone).ToString("dd/MM · HH:mm"); } catch { return L.T("Rinnovo non disponibile"); } }}
 }
 public class Snapshot {
- public Quota Primary,Secondary; public DateTime? Updated; public string Plan=""; public string Error="Connessione a Codex…";
+ public Quota Primary,Secondary; public int? AvailableResets; public DateTime? Updated; public string Plan=""; public string Error="Connessione a Codex…";
  public bool Online {get {return Updated.HasValue && Error==null && (DateTime.UtcNow-Updated.Value).TotalSeconds<Math.Max(90,SettingsStore.Current.PollSeconds+30);}}
+ public string ResetCreditsText {get{return L.T("Reset disponibili: ")+(AvailableResets.HasValue?AvailableResets.Value.ToString():L.T("non disponibili"))+(AvailableResets.HasValue&&!Online?L.T(" (ultimo dato ricevuto)"):"");}}
  public static Snapshot Read(object data) {
   var buckets=Json.Get(data,"rateLimitsByLimitId");
   var limits=Json.Get(buckets,"codex")??Json.Get(data,"rateLimits");
   if(limits==null) throw new Exception("Limiti non disponibili per questo account.");
-  return new Snapshot {Primary=Quota.Read(Json.Get(limits,"primary")),Secondary=Quota.Read(Json.Get(limits,"secondary")),Plan=Json.Str(limits,"planType"),Updated=DateTime.UtcNow,Error=null};
+  var resetCount=Json.Get(Json.Get(data,"rateLimitResetCredits"),"availableCount");
+  return new Snapshot {AvailableResets=resetCount==null?(int?)null:Math.Max(0,Convert.ToInt32(resetCount)),Primary=Quota.Read(Json.Get(limits,"primary")),Secondary=Quota.Read(Json.Get(limits,"secondary")),Plan=Json.Str(limits,"planType"),Updated=DateTime.UtcNow,Error=null};
  }
 }
 sealed class Meter : IDisposable {
@@ -52,7 +54,7 @@ sealed class Meter : IDisposable {
   foreach(var dir in (Environment.GetEnvironmentVariable("PATH")??"").Split(';')) { try {var f=Path.Combine(dir.Trim('"'),"codex.exe");if(File.Exists(f))return f;}catch{} }
   throw new Exception("Codex non trovato. Installa Codex e accedi al tuo account.");
  }
- void Fail(string message) {state=new Snapshot {Primary=state.Primary,Secondary=state.Secondary,Updated=state.Updated,Plan=state.Plan,Error=message};}
+ void Fail(string message) {state=new Snapshot {Primary=state.Primary,Secondary=state.Secondary,Updated=state.Updated,Plan=state.Plan,AvailableResets=state.AvailableResets,Error=message};}
  void StopChild() {if(child!=null){try{if(!child.HasExited)child.Kill();}catch{}child.Dispose();child=null;}ready=false;pending=false;}
  void Tick() {lock(gate) {if(disposed)return;try {
   if(child==null||child.HasExited) {if((DateTime.UtcNow-last).TotalSeconds<15)return;StopChild();last=DateTime.UtcNow;
@@ -82,6 +84,7 @@ static class Program {
   try {
    if(args.Contains("--self-test")) {SelfTest();return 0;}
    if(args.Contains("--settings-test")) {SettingsTest();return 0;}
+   if(args.Contains("--lifecycle-test")){LifecycleTest();return 0;}
    if(args.Contains("--features-test")) {FeaturesTest();return 0;}
    if(args.Contains("--placement-test")) {PlacementTest();return 0;}
    if(args.Contains("--history-preview")){if(string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CODEXDASHBOARD_DATA_DIR")))throw new Exception("Set a separate CODEXDASHBOARD_DATA_DIR for history previews.");Directory.CreateDirectory(SettingsStore.DirectoryPath);File.WriteAllLines(QuotaHistory.FilePath,Enumerable.Range(0,24).Select(i=>Json.Stringify(new HistorySample{At=DateTime.UtcNow.AddHours(i-23).ToString("o"),Short=100-(i%6)*12,Weekly=100-i*2})));var window=QuotaHistory.Show(null);window.UpdateLayout();var bitmap=new System.Windows.Media.Imaging.RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth),(int)Math.Ceiling(window.ActualHeight),96,96,PixelFormats.Pbgra32);bitmap.Render(window);var encoder=new System.Windows.Media.Imaging.PngBitmapEncoder();encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));using(var file=File.Create(Artifacts.Path("history-preview.png")))encoder.Save(file);window.Close();return 0;}
@@ -108,13 +111,32 @@ static class Program {
    } return 0;
   }catch(Exception ex){File.WriteAllText(Artifacts.Path("CodexDashboard-error.log"),ex.ToString());if(!args.Contains("-port")&&!args.Any(x=>x.EndsWith("-test")))MessageBox.Show(ex.Message,"Codex Dashboard");return 1;}
  }
+ static void PumpFor(int milliseconds){var frame=new DispatcherFrame();var tick=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(milliseconds)};tick.Tick+=(s,e)=>{tick.Stop();frame.Continue=false;};tick.Start();Dispatcher.PushFrame(frame);}
+ static void LifecycleTest(){
+  Environment.SetEnvironmentVariable("CODEXDASHBOARD_DATA_DIR",Artifacts.Path("lifecycle-test-"+Guid.NewGuid().ToString("N")));
+  SettingsStore.Save(new UserSettings{Startup="manual",CloseMode="codex"},false);bool codexOpen=false,closed=false;
+  using(var meter=new Meter(false))using(var show=new EventWaitHandle(false,EventResetMode.AutoReset))using(var close=new EventWaitHandle(false,EventResetMode.AutoReset)){
+   // Exercise an ordinary launch, with no --watch-codex flag, then apply the mode live.
+   var w=Widget.Create(meter,show,close,true,false,null,()=>codexOpen);w.Closed+=(s,e)=>closed=true;w.Show();
+   try{SettingsStore.Save(new UserSettings{Startup="codex",CloseMode="codex"},false);PumpFor(3300);if(w.IsVisible||closed)throw new Exception("Monitor must wait hidden for Codex");
+    codexOpen=true;PumpFor(3300);if(!w.IsVisible||closed)throw new Exception("Codex opening must show widget");
+    codexOpen=false;PumpFor(3300);if(w.IsVisible||closed)throw new Exception("Codex closing must preserve monitor");
+    codexOpen=true;PumpFor(3300);if(!w.IsVisible||closed)throw new Exception("Codex reopening must show widget");
+    ((Button)w.FindName("Close")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));if(w.IsVisible||closed)throw new Exception("Widget close must preserve monitor");
+    codexOpen=false;PumpFor(3300);codexOpen=true;PumpFor(3300);if(!w.IsVisible||closed)throw new Exception("Reopen after manual hide failed");
+    SettingsStore.Save(new UserSettings{Startup="codex",CloseMode="manual"},false);codexOpen=false;PumpFor(3300);if(!w.IsVisible||closed)throw new Exception("Manual closing must keep widget visible");
+    close.Set();PumpFor(500);if(!closed)throw new Exception("Explicit exit must stop monitor");
+   }finally{if(!closed)w.Close();}
+  }
+  File.WriteAllText(Artifacts.Path("lifecycle-test.txt"),"PASS: live startup change without launch flag; hidden waiting, open, close, reopen, manual hide/reopen, manual closing, explicit exit.");
+ }
  static void PlacementTest() {
   Environment.SetEnvironmentVariable("CODEXDASHBOARD_DATA_DIR",Artifacts.Path("placement-test-"+Guid.NewGuid().ToString("N")));
   var bounds=new Rect(-1920,0,1920,1040);var expected=new[]{new Point(-1896,24),new Point(-1070,24),new Point(-244,24),new Point(-1896,488),new Point(-1070,488),new Point(-244,488),new Point(-1896,952),new Point(-1070,952),new Point(-244,952)};
   for(int i=1;i<Placement.Positions.Length;i++){var point=Placement.Calculate(bounds,220,64,Placement.Positions[i],24);if(point!=expected[i-1])throw new Exception("Incorrect anchor: "+Placement.Positions[i]);}
   var tight=Placement.Calculate(new Rect(0,0,230,70),220,64,"bottom-right",120);if(tight!=new Point(5,3))throw new Exception("Margin must fit a small screen");
   var invalid=new UserSettings{WidgetPosition="invalid",EdgeMargin=999,MonitorDevice=null};invalid.Normalize();if(invalid.WidgetPosition!="custom"||invalid.EdgeMargin!=120||invalid.MonitorDevice!="")throw new Exception("Position settings validation failed");
-  SettingsStore.Save(new UserSettings(),false);var dialog=Configurator.Create(null,null,false);dialog.Show();var panel=Configurator.Panel(dialog);var placement=(ComboBox)((Grid)panel.Children[13]).Children[1];var buttons=(WrapPanel)panel.Children[panel.Children.Count-1];placement.SelectedIndex=9;((Button)buttons.Children[4]).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));if(!dialog.IsVisible||SettingsStore.Current.WidgetPosition!="bottom-right")throw new Exception("Position Apply failed");placement.SelectedIndex=1;((Button)buttons.Children[2]).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));if(SettingsStore.Current.WidgetPosition!="bottom-right")throw new Exception("Cancel changed applied position");
+  SettingsStore.Save(new UserSettings(),false);var dialog=Configurator.Create(null,null,false);dialog.Show();var panel=Configurator.Panel(dialog);var placement=Configurator.Control<ComboBox>(dialog,"WidgetPlacement");var buttons=(WrapPanel)panel.Children[panel.Children.Count-1];placement.SelectedIndex=9;Configurator.Control<Button>(dialog,"ApplySettings").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));if(!dialog.IsVisible||SettingsStore.Current.WidgetPosition!="bottom-right")throw new Exception("Position Apply failed");placement.SelectedIndex=1;Configurator.Control<Button>(dialog,"CancelSettings").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));if(SettingsStore.Current.WidgetPosition!="bottom-right")throw new Exception("Cancel changed applied position");
   SettingsStore.Save(new UserSettings{WidgetPosition="center",MonitorDevice="disconnected-monitor"},false);
   using(var meter=new Meter(false))using(var show=new EventWaitHandle(false,EventResetMode.AutoReset))using(var close=new EventWaitHandle(false,EventResetMode.AutoReset)){var widget=Widget.Create(meter,show,close,false);widget.Show();var frame=new DispatcherFrame();var tick=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(500)};tick.Tick+=(s,e)=>{tick.Stop();frame.Continue=false;};tick.Start();Dispatcher.PushFrame(frame);var area=SystemParameters.WorkArea;bool centered=Math.Abs(widget.Left-(area.Left+(area.Width-widget.Width)/2))<2&&Math.Abs(widget.Top-(area.Top+(area.Height-widget.Height)/2))<2;widget.Close();if(!centered)throw new Exception("Live positioning or monitor fallback failed");}
   File.WriteAllText(Artifacts.Path("placement-test.txt"),"PASS: nine anchors, negative monitor coordinates, taskbar work area, small-screen margins, settings validation, Apply, Cancel, live widget movement, disconnected monitor fallback.");
@@ -124,19 +146,27 @@ static class Program {
   var settings=new UserSettings{Language="invalid"};settings.Normalize();if(settings.Language!="it")throw new Exception("Language validation failed");SettingsStore.Save(settings,false);
   foreach(var mode in new[]{"manual","windows","codex"}){var command=SettingsStore.StartupCommand(new UserSettings{Startup=mode},"C:\\Example folder\\CodexDashboard.exe");if(mode=="manual"?command!=null:command!="\"C:\\Example folder\\CodexDashboard.exe\""+(mode=="codex"?" --watch-codex":""))throw new Exception("Startup command failed");}
   var w=Configurator.Create(null,null,false);w.Show();var root=Configurator.Panel(w);
-  var language=(ComboBox)((Grid)root.Children[11]).Children[1];language.SelectedIndex=1;
-  var scale=(Slider)((StackPanel)((Grid)root.Children[3]).Children[1]).Children[0];scale.Value=1.4;
-  var buttons=(WrapPanel)root.Children[root.Children.Count-1];((Button)buttons.Children[4]).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-  if(!w.IsVisible||SettingsStore.Current.Language!="en"||SettingsStore.Current.Scale!=1.4||(string)((Button)buttons.Children[4]).Content!="Apply")throw new Exception("Apply or live localization failed");
-  scale.Value=1.9;language.SelectedIndex=0;((Button)buttons.Children[2]).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+  var language=Configurator.Control<ComboBox>(w,"SettingsLanguage");language.SelectedIndex=1;Configurator.Control<Slider>(w,"ShortThreshold").Value=12;Configurator.Control<Slider>(w,"WeeklyThreshold").Value=28;Configurator.Control<ComboBox>(w,"CloseMode").SelectedIndex=1;
+  var scale=Configurator.Control<Slider>(w,"WidgetScale");scale.Value=1.4;
+  var buttons=(WrapPanel)root.Children[root.Children.Count-1];Configurator.Control<Button>(w,"ApplySettings").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+  if(!w.IsVisible||SettingsStore.Current.Language!="en"||SettingsStore.Current.Scale!=1.4||SettingsStore.Current.CloseMode!="codex"||SettingsStore.Current.ThresholdFor(300)!=12||SettingsStore.Current.ThresholdFor(10080)!=28||(string)Configurator.Control<Button>(w,"ApplySettings").Content!="Apply")throw new Exception("Apply or live localization failed");
+  scale.Value=1.9;language.SelectedIndex=0;Configurator.Control<Button>(w,"CancelSettings").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
   if(SettingsStore.Current.Scale!=1.4||SettingsStore.Current.Language!="en")throw new Exception("Cancel must preserve applied settings and discard edits");
-  w=Configurator.Create(null,null,false);root=Configurator.Panel(w);language=(ComboBox)((Grid)root.Children[11]).Children[1];language.SelectedIndex=0;buttons=(WrapPanel)root.Children[root.Children.Count-1];((Button)buttons.Children[3]).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));if(SettingsStore.Current.Language!="it")throw new Exception("Save language failed");
+  w=Configurator.Create(null,null,false);w.Show();root=Configurator.Panel(w);language=Configurator.Control<ComboBox>(w,"SettingsLanguage");language.SelectedIndex=0;buttons=(WrapPanel)root.Children[root.Children.Count-1];Configurator.Control<Button>(w,"SaveSettings").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));if(SettingsStore.Current.Language!="it")throw new Exception("Save language failed");
   foreach(var zoom in new[]{.8,1,1.5,2}){SettingsStore.Save(new UserSettings{Scale=zoom},false);using(var meter=new Meter(false))using(var show=new EventWaitHandle(false,EventResetMode.AutoReset))using(var close=new EventWaitHandle(false,EventResetMode.AutoReset)){var widget=Widget.Create(meter,show,close,false);widget.Show();var frame=new DispatcherFrame();var tick=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(300)};tick.Tick+=(s,e)=>{tick.Stop();frame.Continue=false;};tick.Start();Dispatcher.PushFrame(frame);widget.UpdateLayout();bool valid=Math.Abs(widget.Width-220*zoom)<1&&Math.Abs(widget.Height-64*zoom)<1;widget.Close();if(!valid)throw new Exception("Scale check failed: "+zoom);}}
   var snapshot=new Snapshot{Primary=new Quota{Remaining=42,Minutes=300},Secondary=new Quota{Remaining=85,Minutes=10080},Updated=DateTime.UtcNow,Error=null};QuotaHistory.Record(snapshot);QuotaHistory.Record(snapshot);var rows=QuotaHistory.Load();if(rows.Count!=1||rows[0].Short!=42||rows[0].Weekly!=85)throw new Exception("History or duplicate suppression failed");
   File.AppendAllText(QuotaHistory.FilePath,"\ninvalid-json\n");if(QuotaHistory.Load().Count!=1)throw new Exception("History recovery failed");snapshot.Error="offline";QuotaHistory.Record(snapshot);if(QuotaHistory.Load().Count!=1)throw new Exception("Offline history suppression failed");
   File.WriteAllText(Artifacts.Path("features-test.txt"),"PASS: language validation, Apply stays open, immediate language change, Cancel discards unapplied changes, Save language, history samples/deduplication/corrupt-line recovery/offline exclusion.");
  }
  static void SelfTest() {
+  var desktopPath=@"C:\Program Files\WindowsApps\OpenAI.Codex_test\app\ChatGPT.exe";if(SettingsStore.IsCodexDesktopWindow(desktopPath,IntPtr.Zero)||!SettingsStore.IsCodexDesktopWindow(desktopPath,new IntPtr(1)))throw new Exception("Background Codex processes must not count as an open window");
+
+  var legacyThresholds=new UserSettings{LowThreshold=22};legacyThresholds.Normalize();if(legacyThresholds.ThresholdFor(300)!=22||legacyThresholds.ThresholdFor(10080)!=22)throw new Exception("Legacy threshold migration failed");
+  var separateThresholds=new UserSettings{Notifications=true,ShortLowThreshold=10,WeeklyLowThreshold=25};separateThresholds.Normalize();var separateAlerts=new LowQuotaAlert();var separateData=new Snapshot{Primary=new Quota{Minutes=300,Remaining=20},Secondary=new Quota{Minutes=10080,Remaining=20},Updated=DateTime.UtcNow,Error=null};var separateMessage=separateAlerts.Check(separateData,separateThresholds);if(separateMessage==null||separateMessage.Contains("5 ")||separateAlerts.Check(separateData,separateThresholds)!=null)throw new Exception("Independent thresholds or duplicate alerts failed");separateData.Primary.Remaining=5;if(separateAlerts.Check(separateData,separateThresholds)==null)throw new Exception("Short quota alert failed");
+
+  foreach(var count in new[]{0,2}){var resetSample=Snapshot.Read(Json.Parse("{\"rateLimits\":{},\"rateLimitResetCredits\":{\"availableCount\":"+count+"}}"));if(resetSample.AvailableResets!=count||!resetSample.ResetCreditsText.Contains(count.ToString()))throw new Exception("Reset credits count failed");}
+  if(Snapshot.Read(Json.Parse("{\"rateLimits\":{}}")).AvailableResets.HasValue)throw new Exception("Missing reset count must stay unknown");
+  if(!SettingsStore.IsCodexDesktopPath(@"C:\Program Files\WindowsApps\OpenAI.Codex_26.1002_x64__test\app\ChatGPT.exe")||SettingsStore.IsCodexDesktopPath(@"C:\Program Files\WindowsApps\OpenAI.ChatGPT_test\app\ChatGPT.exe")||SettingsStore.IsCodexDesktopPath(@"C:\Users\test\AppData\Local\OpenAI\Codex\bin\test\codex.exe"))throw new Exception("Codex desktop detection failed");
   var s=Snapshot.Read(Json.Parse("{\"rateLimits\":{\"primary\":{\"usedPercent\":25,\"windowDurationMins\":300},\"secondary\":null}}"));
   if(s.Primary.Remaining!=75||s.Secondary!=null)throw new Exception("Quota conversion failed");
   s=Snapshot.Read(Json.Parse("{\"rateLimits\":{\"primary\":{\"usedPercent\":0,\"windowDurationMins\":300}},\"rateLimitsByLimitId\":{\"codex\":{\"primary\":{\"usedPercent\":120,\"windowDurationMins\":10080}}}}"));
@@ -147,8 +177,8 @@ static class Program {
  }
  static void SettingsTest() {
   Environment.SetEnvironmentVariable("CODEXDASHBOARD_DATA_DIR",Artifacts.Path("settings-test"));
-  var invalid=new UserSettings{Scale=double.NaN,Opacity=5,PollSeconds=1,LowThreshold=100,Startup="invalid"};invalid.Normalize();
-  if(invalid.Scale!=1||invalid.Opacity!=1||invalid.PollSeconds!=30||invalid.LowThreshold!=50||invalid.Startup!="manual")throw new Exception("Settings validation failed");
+  var invalid=new UserSettings{CloseMode="invalid",Scale=double.NaN,Opacity=5,PollSeconds=1,LowThreshold=100,Startup="invalid"};invalid.Normalize();
+  if(invalid.Scale!=1||invalid.Opacity!=1||invalid.PollSeconds!=30||invalid.LowThreshold!=50||invalid.Startup!="manual"||invalid.CloseMode!="manual")throw new Exception("Settings validation failed");
   var saved=new UserSettings{Scale=1.5,Opacity=.6,PollSeconds=300,LowThreshold=20,ShowUsed=true};SettingsStore.Save(saved,false);
   if(SettingsStore.Current.Scale!=1.5||SettingsStore.Current.PollSeconds!=300||!SettingsStore.Current.ShowUsed)throw new Exception("Settings persistence failed");
   var alerts=new LowQuotaAlert();var options=new UserSettings{Notifications=true,LowThreshold=15};var snapshot=new Snapshot{Primary=new Quota{Remaining=10,Minutes=300},Updated=DateTime.UtcNow,Error=null};
@@ -156,8 +186,8 @@ static class Program {
   snapshot.Primary.Remaining=20;alerts.Check(snapshot,options);snapshot.Primary.Remaining=10;if(alerts.Check(snapshot,options)==null)throw new Exception("Alert rearming failed");
   snapshot.Error="offline";if(alerts.Check(snapshot,options)!=null)throw new Exception("Offline alert suppression failed");
   var dialog=Configurator.Create(null,null,false);var panel=Configurator.Panel(dialog);
-  var scale=(Slider)((StackPanel)((Grid)panel.Children[3]).Children[1]).Children[0];scale.Value=1.8;
-  var buttons=(WrapPanel)panel.Children[panel.Children.Count-1];((Button)buttons.Children[3]).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+  var scale=Configurator.Control<Slider>(dialog,"WidgetScale");scale.Value=1.8;
+  var buttons=(WrapPanel)panel.Children[panel.Children.Count-1];Configurator.Control<Button>(dialog,"SaveSettings").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
   if(Math.Abs(SettingsStore.Current.Scale-1.8)>.001)throw new Exception("Configurator save failed");
   using(var meter=new Meter(false))using(var show=new EventWaitHandle(false,EventResetMode.AutoReset))using(var close=new EventWaitHandle(false,EventResetMode.AutoReset)) {
    var widget=Widget.Create(meter,show,close,false);widget.Show();var frame=new DispatcherFrame();var tick=new DispatcherTimer{Interval=TimeSpan.FromMilliseconds(500)};tick.Tick+=(s,e)=>{tick.Stop();frame.Continue=false;};tick.Start();Dispatcher.PushFrame(frame);widget.UpdateLayout();
@@ -177,7 +207,7 @@ sealed class HudMenuRenderer : System.Windows.Forms.ToolStripProfessionalRendere
 }
 static class Widget {
  static Brush Color(string hex) {return (Brush)new BrushConverter().ConvertFromString(hex);}
- public static Window Create(Meter meter,EventWaitHandle show,EventWaitHandle close,bool persist=true,bool watchCodex=false,EventWaitHandle configure=null) {
+ public static Window Create(Meter meter,EventWaitHandle show,EventWaitHandle close,bool persist=true,bool watchCodex=false,EventWaitHandle configure=null,Func<bool> codexDetector=null) {
   string xaml;using(var reader=new StreamReader(typeof(Widget).Assembly.GetManifestResourceStream("Widget.xaml")))xaml=reader.ReadToEnd();
   var w=(Window)System.Windows.Markup.XamlReader.Parse(xaml);var ui=new Dictionary<string,object>();
   foreach(var name in new[]{"Controls","Close","Refresh","DragArea","Status","PrimaryValue","PrimaryLabel","PrimaryBar","PrimaryCard","SecondaryValue","SecondaryLabel","SecondaryBar","SecondaryCard"})ui[name]=w.FindName(name);
@@ -187,7 +217,7 @@ static class Widget {
   var virtualArea=new Rect(SystemParameters.VirtualScreenLeft,SystemParameters.VirtualScreenTop,SystemParameters.VirtualScreenWidth,SystemParameters.VirtualScreenHeight);
   if(!virtualArea.Contains(new Rect(w.Left,w.Top,w.Width,w.Height))){w.Left=area.Right-w.Width-24;w.Top=area.Bottom-w.Height-24;}
   string appliedPlacement=null;bool hovered=false;w.MouseEnter+=(s,e)=>{hovered=true;w.Opacity=1;((StackPanel)ui["Controls"]).Opacity=1;};w.MouseLeave+=(s,e)=>{hovered=false;w.Opacity=SettingsStore.Current.Opacity;((StackPanel)ui["Controls"]).Opacity=0;};
-  ((Button)ui["Close"]).Click+=(s,e)=>w.Close();((Button)ui["Refresh"]).Click+=(s,e)=>meter.Refresh();
+  ((Button)ui["Close"]).Click+=(s,e)=>{if((persist||watchCodex)&&SettingsStore.Current.Startup=="codex")w.Hide();else w.Close();};((Button)ui["Refresh"]).Click+=(s,e)=>meter.Refresh();
   ((Grid)ui["DragArea"]).MouseLeftButtonDown+=(s,e)=>{if(e.OriginalSource is TextBlock||e.OriginalSource==ui["DragArea"]) {double left=w.Left,top=w.Top;w.DragMove();if(persist&&(Math.Abs(w.Left-left)>.5||Math.Abs(w.Top-top)>.5)){var prefs=new JavaScriptSerializer().Deserialize<UserSettings>(Json.Stringify(SettingsStore.Current));prefs.WidgetPosition="custom";SettingsStore.Save(prefs,false);}}};
   System.Drawing.Icon icon;using(var stream=typeof(Widget).Assembly.GetManifestResourceStream("Dashboard.ico"))using(var original=new System.Drawing.Icon(stream))icon=(System.Drawing.Icon)original.Clone();
   var tray=new System.Windows.Forms.NotifyIcon {Icon=icon,Text="Codex Dashboard",Visible=true};
@@ -200,7 +230,7 @@ static class Widget {
   foreach(var item in menu.Items.OfType<System.Windows.Forms.ToolStripItem>())item.Tag=item.Text;
   var historyItem=new MenuItem{Header="Storico quote"};historyItem.Click+=(s,e)=>QuotaHistory.Show(w);context.Items.Add(historyItem);
   var aboutItem=new MenuItem{Header="Informazioni e diagnostica"};aboutItem.Click+=(s,e)=>Info.Show(w,meter.State);context.Items.Add(aboutItem);
-  var alerts=new LowQuotaAlert();double appliedScale=0;DateTime watched=DateTime.MinValue;bool wasOpen=false;
+  var alerts=new LowQuotaAlert();double appliedScale=0;DateTime watched=DateTime.MinValue;bool wasOpen=false,seenCodex=false;
   var timer=new DispatcherTimer {Interval=TimeSpan.FromMilliseconds(250)};timer.Tick+=(s,e)=>{
    if(close.WaitOne(0)){w.Close();return;}if(show.WaitOne(0)){w.Show();w.Activate();}
    if(configure!=null&&configure.WaitOne(0))Configurator.Show(w,center);
@@ -210,19 +240,20 @@ static class Widget {
    if(appliedScale!=prefs.Scale){appliedScale=prefs.Scale;((Grid)w.Content).LayoutTransform=new ScaleTransform(prefs.Scale,prefs.Scale);w.Width=220*prefs.Scale;w.Height=64*prefs.Scale;var desktop=SystemParameters.WorkArea;w.Left=Math.Max(SystemParameters.VirtualScreenLeft,Math.Min(w.Left,SystemParameters.VirtualScreenLeft+SystemParameters.VirtualScreenWidth-w.Width));w.Top=Math.Max(SystemParameters.VirtualScreenTop,Math.Min(w.Top,SystemParameters.VirtualScreenTop+SystemParameters.VirtualScreenHeight-w.Height));}
    string placementKey=prefs.WidgetPosition+"|"+prefs.MonitorDevice+"|"+prefs.EdgeMargin+"|"+prefs.Scale+"|"+Placement.ScreenSignature();if(appliedPlacement!=placementKey){appliedPlacement=placementKey;if(prefs.WidgetPosition!="custom")Placement.Apply(w,prefs);}
    w.Topmost=prefs.Topmost;if(!hovered)w.Opacity=prefs.Opacity;
-   ((Grid)ui["DragArea"]).ToolTip=L.T("Trascina per spostare · dati ogni ")+prefs.PollSeconds+L.T(" s · tasto destro per impostazioni");
-   if(watchCodex&&prefs.Startup=="codex"&&(DateTime.UtcNow-watched).TotalSeconds>=3){watched=DateTime.UtcNow;bool open=SettingsStore.CodexIsOpen();if(open!=wasOpen){if(open)w.Show();else w.Hide();wasOpen=open;}else if(!open&&w.IsVisible)w.Hide();}
-   var data=meter.State;string notification=alerts.Check(data,prefs);if(persist&&notification!=null){tray.BalloonTipTitle=L.T("Codex Dashboard · Quota bassa");tray.BalloonTipText=notification;tray.ShowBalloonTip(5000);}
+   var data=meter.State;
+   ((Grid)ui["DragArea"]).ToolTip=data.ResetCreditsText+"\n"+L.T("Trascina per spostare · dati ogni ")+prefs.PollSeconds+L.T(" s · tasto destro per impostazioni");
+   if(((persist||watchCodex)&&prefs.Startup=="codex"||prefs.CloseMode=="codex")&&(DateTime.UtcNow-watched).TotalSeconds>=3){watched=DateTime.UtcNow;bool open=codexDetector!=null?codexDetector():SettingsStore.CodexIsOpen();bool followStartup=(persist||watchCodex)&&prefs.Startup=="codex";if(open){seenCodex=true;if(followStartup&&!wasOpen)w.Show();}else if(followStartup&&!seenCodex)w.Hide();else if(seenCodex&&prefs.CloseMode=="codex"){if(followStartup)w.Hide();else {w.Close();return;}}wasOpen=open;}
+   string notification=alerts.Check(data,prefs);if(persist&&notification!=null){tray.BalloonTipTitle=L.T("Codex Dashboard · Quota bassa");tray.BalloonTipText=notification;tray.ShowBalloonTip(5000);}
    foreach(var prefix in new[]{"Primary","Secondary"}) {
     var q=prefix=="Primary"?data.Primary:data.Secondary;var value=(TextBlock)ui[prefix+"Value"];var bar=(ProgressBar)ui[prefix+"Bar"];
     double display=q==null?0:prefs.ShowUsed?100-q.Remaining:q.Remaining;value.Text=q==null?"—":display.ToString("0.#")+"%";bar.Value=display;
     ((TextBlock)ui[prefix+"Label"]).Text=L.T(q==null?"NON DISP.":q.Label);
-    bar.Foreground=Color(q!=null&&q.Remaining<=prefs.LowThreshold?Theme.alert:prefix=="Primary"?Theme.yellow:Theme.cyan);
-    value.Foreground=Color(q!=null&&q.Remaining<=prefs.LowThreshold?Theme.alert:prefix=="Primary"?Theme.yellow:Theme.cyan);
-    ((StackPanel)ui[prefix+"Card"]).ToolTip=q==null?L.T("Dato non disponibile"):value.Text+L.T(prefs.ShowUsed?" consumata · ":" disponibile · ")+q.ResetText;
+    bar.Foreground=Color(q!=null&&q.Remaining<=prefs.ThresholdFor(q.Minutes)?Theme.alert:prefix=="Primary"?Theme.yellow:Theme.cyan);
+    value.Foreground=Color(q!=null&&q.Remaining<=prefs.ThresholdFor(q.Minutes)?Theme.alert:prefix=="Primary"?Theme.yellow:Theme.cyan);
+    ((StackPanel)ui[prefix+"Card"]).ToolTip=q==null?L.T("Dato non disponibile"):value.Text+L.T(prefs.ShowUsed?" consumata · ":" disponibile · ")+q.ResetText;((StackPanel)ui[prefix+"Card"]).ToolTip+="\n"+data.ResetCreditsText;
    }
    var status=(TextBlock)ui["Status"];status.Text=data.Online?"●":"!";status.Foreground=Color(data.Online?Theme.cyan:Theme.alert);
-   status.ToolTip=data.Online?L.T("Aggiornato alle ")+data.Updated.Value.ToLocalTime().ToString("HH:mm:ss")+" · "+data.Plan+L.T(prefs.ShowUsed?" · Quota consumata":" · Quota disponibile"):L.T("Dati non aggiornati · ")+L.T(data.Error??"In attesa di aggiornamento");
+   status.ToolTip=data.Online?L.T("Aggiornato alle ")+data.Updated.Value.ToLocalTime().ToString("HH:mm:ss")+" · "+data.Plan+L.T(prefs.ShowUsed?" · Quota consumata":" · Quota disponibile"):L.T("Dati non aggiornati · ")+L.T(data.Error??"In attesa di aggiornamento");status.ToolTip+="\n"+data.ResetCreditsText;
   };timer.Start();
   w.Closed+=(s,e)=>{timer.Stop();tray.Dispose();icon.Dispose();menu.Font.Dispose();menu.Dispose();if(persist)try{Directory.CreateDirectory(Path.GetDirectoryName(settings));File.WriteAllText(settings,Json.Stringify(new {left=w.Left,top=w.Top}));}catch{}};
   return w;
@@ -235,7 +266,7 @@ static class Plugin {
  static string Image(Quota q,bool online,bool launcher,bool weekly=false,object settings=null) {
   var prefs=SettingsStore.Current;var mode=Json.Str(settings,"mode");bool used=mode=="used"||mode!="available"&&prefs.ShowUsed;
   var language=Json.Str(settings,"language");bool english=language=="en"||language!="it"&&L.IsEnglish;
-  int threshold=prefs.LowThreshold;int custom;if(int.TryParse(Json.Str(settings,"threshold"),out custom))threshold=Math.Max(1,Math.Min(50,custom));
+  int threshold=prefs.ThresholdFor(weekly?10080:300);int custom;if(int.TryParse(Json.Str(settings,"threshold"),out custom))threshold=Math.Max(1,Math.Min(50,custom));
   double display=q==null?0:used?100-q.Remaining:q.Remaining;
   string color=q!=null&&q.Remaining<=threshold?Theme.alert:weekly?Theme.cyan:Theme.yellow;
   string label=launcher?"CODEX":L.T(weekly?"SETT.":"5 ORE",english);

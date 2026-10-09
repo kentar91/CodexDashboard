@@ -16,14 +16,14 @@ namespace CodexDashboard {
 static class AppVersion {public const string Value="2.0.1";}
 static class L {
  static readonly Dictionary<string,string> English=new Dictionary<string,string> {
-  {"Impostazioni","Settings"},{"Impostazioni…","Settings…"},{"Codex Dashboard · Impostazioni","Codex Dashboard · Settings"},{"CONFIGURAZIONE","SETTINGS"},
+  {"Reset disponibili: ","Available resets: "},{"non disponibili","unavailable"},{" (ultimo dato ricevuto)"," (last received data)"},{"Impostazioni","Settings"},{"Impostazioni…","Settings…"},{"Codex Dashboard · Impostazioni","Codex Dashboard · Settings"},{"CONFIGURAZIONE","SETTINGS"},{"ASPETTO","APPEARANCE"},{"POSIZIONE DEL WIDGET","WIDGET POSITION"},{"QUOTE E AGGIORNAMENTI","QUOTAS AND UPDATES"},{"Monitor","Monitor"},{"Percentuale mostrata","Displayed percentage"},
   {"Schermo del widget","Widget screen"},{"Posizione del widget","Widget position"},{"Distanza dai bordi","Edge spacing"},
   {"Personalizzata (trascina)","Custom (drag widget)"},{"In alto a sinistra","Top left"},{"In alto al centro","Top center"},{"In alto a destra","Top right"},{"Al centro a sinistra","Middle left"},{"Centro schermo","Screen center"},{"Al centro a destra","Middle right"},{"In basso a sinistra","Bottom left"},{"In basso al centro","Bottom center"},{"In basso a destra","Bottom right"},
   {"La posizione si applica con Applica o Salva.\nTrascinando il widget passi alla posizione personalizzata.","Apply or Save to move the widget.\nDragging the widget switches to custom positioning."},
   {"Dimensione widget","Widget size"},{"Opacità a riposo","Idle opacity"},{"Posizione e visibilità","Position and visibility"},{"Sempre in primo piano","Always on top"},
-  {"Avvio automatico","Startup"},{"Solo avvio manuale","Manual startup only"},{"Con Windows","With Windows"},{"Quando apri Codex","When Codex opens"},
+  {"Chiusura widget","Widget closing"},{"Solo manualmente","Manually only"},{"Quando chiudi Codex","When Codex closes"},{"Avvio automatico","Startup"},{"Solo avvio manuale","Manual startup only"},{"Con Windows","With Windows"},{"Quando apri Codex","When Codex opens"},
   {"Aggiorna dati ogni","Refresh data every"},{"30 secondi","30 seconds"},{"60 secondi","60 seconds"},{"120 secondi","120 seconds"},{"300 secondi","300 seconds"},
-  {"Soglia quota bassa","Low quota threshold"},{"Notifica quando la quota scende sotto la soglia","Notify when quota falls below the threshold"},{"Widget e Stream Deck","Widget and Stream Deck"},
+  {"SOGLIE E NOTIFICHE","THRESHOLDS AND NOTIFICATIONS"},{"Quota 5 ore","5-hour quota"},{"Quota settimana","Weekly quota"},{"Soglia quota bassa","Low quota threshold"},{"Notifica quando la quota scende sotto la soglia","Notify when quota falls below the threshold"},{"Widget e Stream Deck","Widget and Stream Deck"},
   {"Quota disponibile","Available quota"},{"Quota consumata","Used quota"},{"Ripristina","Reset"},{"Centra widget","Center widget"},{"Annulla","Cancel"},{"Salva","Save"},{"Applica","Apply"},{"Lingua","Language"},
   {"Mostra widget","Show widget"},{"Aggiorna","Refresh"},{"Esci","Exit"},{"Chiudi","Close"},{"Aggiorna ora","Refresh now"},{"Informazioni e diagnostica","About and diagnostics"},{"Storico quote","Quota history"},
   {"NON DISP.","N/A"},{"SETTIMANA","WEEK"},{"SETT.","WEEK"},{"5 ORE","5 HOURS"},{"APRI","OPEN"},{"ORE","HOURS"},{"Si rinnova ","Renews "},{"Rinnovo non disponibile","Reset time unavailable"},
