@@ -2,84 +2,92 @@
 
 [Italiano](README.md) · [English](README.en.md)
 
-Widget Windows e plugin Stream Deck per leggere le quote Codex. Tema Cyberpunk 2077, logo CD, colori condivisi, configuratore integrato.
+![Codex Dashboard](assets/branding/codex-dashboard-logo-dark.png)
 
-Creato da **Marco (kentar91)**. Distribuito con [licenza MIT](LICENSE). Per proporre una modifica o segnalare un problema, apri una [issue su GitHub](https://github.com/kentar91/CodexDashboard/issues). Progetto indipendente, non affiliato a OpenAI, Elgato o CD PROJEKT RED.
+**Le quote Codex sempre a portata di mano, sul desktop e su Stream Deck.**
 
-## Avvio rapido
+Codex Dashboard è un widget per Windows e un plugin Stream Deck che mostrano la disponibilità delle quote Codex su cinque ore e settimana. Un colpo d'occhio permette di controllare quanto utilizzo rimane e quando si rinnova, senza interrompere il lavoro per cercare queste informazioni.
 
-Scarica i pacchetti pronti dalla [pagina delle release](https://github.com/kentar91/CodexDashboard/releases/latest). Per l'installazione usa `CodexDashboard-Setup-2.0.7.exe`; per l'uso portatile estrai `CodexDashboard-2.0.7-windows-x64.zip` e apri `CodexDashboard.exe`. Le cartelle `dist` descritte sotto sono generate localmente e non sono incluse nel repository dei sorgenti.
+[Scarica la versione corrente](https://github.com/kentar91/CodexDashboard/releases/latest) · [Guida completa](docs/GUIDA.md) · [Segnala un problema o proponi una modifica](https://github.com/kentar91/CodexDashboard/issues)
 
-- Doppio clic su **Avvia-CodexDashboard.vbs** nella cartella principale, oppure su **dist/app/CodexDashboard.exe**.
-- Per configurare: tasto destro sul widget → **Impostazioni**, menu dell'icona vicino all'orologio oppure **dist/app/Impostazioni-CodexDashboard.vbs**.
-- Per Stream Deck: installa **dist/streamdeck/com.codexdashboard.monitor.streamDeckPlugin** con doppio clic.
-- Per il logo: **dist/branding/CodexDashboard-logo-kit.zip**. I file modificabili sono in **assets/branding**.
-- Per installare o aggiornare: **dist/installer/CodexDashboard-Setup-2.0.7.exe**. Scegli Italiano o English e **Solo programma**, **Solo plugin Stream Deck** oppure **Programma e plugin Stream Deck**. L'installazione è per il tuo utente; i collegamenti sono creati solo per il programma. Un componente già presente e non selezionato viene conservato. Per il plugin, il pacchetto viene aperto nell'app Elgato per confermare l'importazione.
+## Perché ho creato questo strumento
 
-Serve Windows 10/11 x64 con .NET Framework 4.8 e Codex installato con accesso ChatGPT già effettuato. Per usare il programma non servono Node.js, Python o chiavi API. Il plugin richiede Stream Deck 6.6 o superiore e funziona anche con il widget chiuso.
+Ho creato Codex Dashboard per un'esigenza pratica: mentre lavoro con Codex, voglio avere sempre sott'occhio lo stato dell'utilizzo e sapere quanto margine mi rimane. Cercare queste informazioni ogni volta spezza il ritmo, soprattutto durante sessioni lunghe o quando passo fra più finestre.
 
-## Configuratore
+L'idea è portare questo stato direttamente sulla scrivania: un piccolo widget visibile mentre lavoro e, per chi usa Stream Deck, percentuali grandi sui tasti fisici. Le soglie e lo storico aiutano a seguire l'andamento delle quote e a organizzare il lavoro in vista del prossimo rinnovo.
 
-Puoi impostare dimensione dal 80% al 200%, opacità a riposo dal 40% al 100%, primo piano, posizione, avvio manuale/con Windows/quando apri Codex, aggiornamento ogni 30/60/120/300 secondi, soglie separate per quota 5 ore e settimana e notifiche facoltative. La scelta quota disponibile/consumata e la frequenza si applicano anche al plugin aggiornato.
+— **Marco (kentar91), creatore del progetto**
 
-**Applica** salva e applica subito senza chiudere. **Salva** applica e chiude. **Annulla** scarta solo le modifiche successive all'ultimo Applica. **Lingua** sceglie Italiano o English per widget, menu, impostazioni e tasti. **Ripristina** carica i valori predefiniti da confermare con Applica o Salva. **Centra widget** seleziona il centro dello schermo da confermare con Applica o Salva. Avvio automatico e notifiche sono disattivati inizialmente. La scelta di avvio si applica subito al programma aperto e viene registrata per i successivi accessi a Windows; nella modalità Codex un monitor nell'area di notifica apre il widget quando avvii l'app desktop. **Chiusura widget** sceglie **Solo manualmente** (predefinito) oppure **Quando chiudi Codex**, indipendentemente dalla modalità di avvio. La chiusura automatica interviene dopo aver rilevato una finestra di Codex aperta e poi chiusa (i processi residui in background non contano), entro circa tre secondi. Con avvio quando apri Codex e chiusura quando chiudi Codex, il programma termina completamente (widget, icona e processo). Un’attività di Windows per il tuo utente controlla l’apertura ogni 10 secondi e avvia una nuova istanza soltanto quando Codex è aperto; la comparsa può richiedere circa 10 secondi. L’attività viene creata con Applica/Salva, aggiornata dall’installer e rimossa scegliendo un’altra modalità o disinstallando. Con chiusura manuale il monitor può invece restare attivo in background. La X nasconde il widget nella modalità di avvio Codex; Esci termina il programma, che potrà ripartire alla successiva verifica se Codex resta aperto e l’avvio automatico è abilitato.
+> **Quote e token:** la versione 2.0.7 visualizza le percentuali delle quote dell'abbonamento riportate da Codex. Non mostra il numero esatto di token consumati, i token di una singola conversazione o i costi API. Le percentuali non sono convertite in un conteggio di token.
 
-**Schermo del widget** sceglie il monitor. **Posizione del widget** offre nove posizioni (angoli, centro dei bordi e centro schermo) oppure **Personalizzata (trascina)**. **Distanza dai bordi** imposta il margine da 0 a 120 pixel; la barra delle applicazioni viene esclusa dall'area disponibile. La scelta resta salvata e viene applicata anche al riavvio o al cambio di dimensione del widget. Se il monitor non è disponibile, il widget usa quello principale. Trascinando il widget passi automaticamente alla posizione personalizzata. La finestra delle impostazioni scorre sui display più piccoli; Ripristina, Annulla, Applica e Salva restano sempre visibili in basso. Lo stato dell’avvio Windows e il comportamento della X sono indicati nelle impostazioni.
+## Cosa offre
 
-Le impostazioni e la posizione sono salvate in `%LOCALAPPDATA%/CodexDashboard`, condivise con il plugin. La riorganizzazione del progetto non modifica questi dati personali.
-
-## Widget e tasti
-
-Il widget è trascinabile, largo 220 × 64 pixel alla dimensione predefinita. Mostra titolo completo e percentuali; i pulsanti Aggiorna e Chiudi compaiono al passaggio del mouse. Una seconda apertura mostra l'istanza esistente. I suggerimenti sul titolo e sulle quote mostrano anche il numero di reset disponibili, letto da Codex a ogni aggiornamento. Se il dato manca viene indicato come non disponibile; se la connessione è persa, il numero precedente è contrassegnato come ultimo dato ricevuto. Il suggerimento mostra anche la prossima scadenza fra i reset disponibili. I suggerimenti sulle quote mostrano il rinnovo in Europe/Rome.
-
-In Stream Deck trascina sui tasti le azioni **Quota 5 ore**, **Quota settimana** e **Apri widget**. Premi le quote per aggiornare, oppure il tasto **CODEX DASHBOARD / APRI** per aprire il programma. Le quote sono identificate per durata, 300 e 10080 minuti; durate mancanti sono segnalate. Sono supportati i pulsanti, non le manopole Stream Deck+.
-
-Seleziona un tasto nell'app Stream Deck per personalizzare lingua, percentuale disponibile/consumata e soglia rossa. **Impostazioni app** segue la configurazione globale. Le modifiche per tasto sono salvate da Stream Deck.
-
-Il menu del widget e dell'icona vicino all'orologio offre **Storico quote** e **Informazioni e diagnostica**: due grafici separati per quota 5 ore e settimana, filtrati sulle ultime 24 ore/7 giorni. Gli assi mostrano percentuale disponibile e orario Europe/Rome; il periodo disegnato va dal primo all’ultimo dato raccolto, con valori leggibili al passaggio del mouse. Include, esportazione CSV, versione, piano dell'account, ultimo aggiornamento, stato offline ed esportazione JSON. Lo storico conserva fino a 30 giorni e non registra dati di autenticazione. L'esportazione diagnostica contiene impostazioni, quote e ultimo errore di connessione, senza credenziali.
-
-**Installa aggiornamento** apre un installatore completo scaricato dall'utente. Il pacchetto porta app e plugin alla stessa versione; l'importazione in Stream Deck richiede la conferma nell'app Elgato. Non è ancora disponibile un canale pubblico per gli aggiornamenti automatici online. La disinstallazione conserva impostazioni e storico; il plugin installato in Elgato si rimuove dall'app Stream Deck.
-
-Il giallo identifica la quota breve; il turchese la settimana. Percentuali e barre diventano rosse alla soglia impostata per ciascuna quota. Nella sezione Soglie e notifiche puoi impostare separatamente Quota 5 ore e Quota settimana (1–50% disponibile), anche quando visualizzi la quota consumata. Le impostazioni esistenti inizializzano entrambe le soglie con il vecchio valore. I tasti Stream Deck seguono la soglia della rispettiva quota, salvo una personalizzazione per tasto. `!` e `OFFLINE` indicano dati precedenti o collegamento mancante; `—` indica un dato non disponibile. Le notifiche non si ripetono finché la quota non risale e poi scende di nuovo. Riconnessione dopo 15 secondi e timeout di lettura dopo 25 secondi.
-
-## Cartelle
-
-| Cartella | Contenuto |
+| Funzione | Utilità |
 | --- | --- |
-| `src` | Programma, configuratore, layout e manifest Stream Deck |
-| `assets` | Tema e logo ufficiale SVG/PNG/ICO |
-| `docs` | Documentazione e regole visive |
-| `scripts` | Compilazione, export logo e modelli dei lanciatori |
-| `tests` | Verifiche automatiche |
-| `build` | Plugin compilato, sorgenti generati, anteprime e risultati dei test |
-| `dist` | Programma, plugin installabile e kit logo pronti all'uso |
+| Widget compatto | Quote su cinque ore e settimana sempre visibili, con dimensione, opacità e posizione configurabili |
+| Tasti Stream Deck | Percentuali grandi, aggiornamento manuale e apertura del widget |
+| Disponibile o consumato | Scegli come leggere le percentuali |
+| Soglie e notifiche | Imposta avvisi separati per le due quote |
+| Storico locale | Grafici delle ultime 24 ore o 7 giorni, conservazione fino a 30 giorni ed esportazione CSV |
+| Avvio e chiusura | Avvio manuale, con Windows o con Codex; chiusura facoltativa quando Codex si chiude |
+| Italiano e inglese | Interfaccia, installer e documentazione in entrambe le lingue |
+| Diagnostica | Stato della connessione, ultimo aggiornamento ed esportazione JSON |
 
-Dettagli in [docs/STRUTTURA.md](docs/STRUTTURA.md), stile in [docs/DESIGN.md](docs/DESIGN.md), palette in [assets/theme.json](assets/theme.json).
+Lo stile HUD è ispirato alla palette di Cyberpunk 2077, con grafica originale e percentuali leggibili. Il progetto è indipendente e non è affiliato a OpenAI, Elgato o CD PROJEKT RED.
 
-## Compilazione e pacchetti
+## Installazione
 
-Chiudi il widget e l'eventuale configuratore. Esegui **build.ps1** dalla cartella principale: richiama `scripts/build.ps1` e ricrea programma, plugin compilato e ZIP del logo. Il compilatore .NET è quello di Windows; gli asset grafici esportati sono già inclusi nel progetto.
+**Requisiti:** Windows 10/11 x64, .NET Framework 4.8 e Codex installato con accesso ChatGPT già effettuato. Per il plugin serve Stream Deck 6.6 o superiore. Non servono chiavi API, Node.js o Python per usare l'app.
 
-Per rigenerare anche l'installatore Stream Deck usa `build.ps1 -Package`, con la CLI ufficiale Elgato disponibile, oppure `build.ps1 -Package -StreamDeckCli <percorso CLI>`. Il manifest sorgente è `src/streamdeck/manifest.json`; non modificare la copia generata in `build/streamdeck`.
+1. Apri la [pagina delle release](https://github.com/kentar91/CodexDashboard/releases/latest).
+2. Scarica `CodexDashboard-Setup-2.0.7.exe` e scegli la lingua.
+3. Seleziona **Solo programma**, **Solo plugin Stream Deck** oppure entrambi.
+4. Avvia il programma e apri **Impostazioni** dal tasto destro sul widget o dal menu dell'icona vicino all'orologio.
 
-`build.ps1 -Installer -StreamDeckCli <percorso CLI>` genera anche l'installatore Windows bilingue che include programma, icona e pacchetto Stream Deck della stessa compilazione.
+Per l'uso portatile, estrai `CodexDashboard-2.0.7-windows-x64.zip` e apri `CodexDashboard.exe`. Per installare soltanto il plugin, apri `com.codexdashboard.monitor.streamDeckPlugin` e conferma l'importazione nell'app Elgato. Il kit logo è scaricabile separatamente.
 
-I sorgenti del logo sono in `assets/branding`; `scripts/export-brand.cjs` rigenera PNG e ICO con Sharp. Il kit contiene simbolo trasparente, firma completa, icona HUD, varianti monocromatiche e icone Windows da 16 a 256 pixel.
+Gli eseguibili della milestone non sono firmati digitalmente. La release include `SHA256SUMS.txt` per verificare l'integrità dei file scaricati. Le cartelle `build` e `dist` sono generate localmente e non sono incluse nei sorgenti su GitHub.
 
-## Verifiche
+## Primo utilizzo
 
-Per salvare le verifiche dentro il progetto imposta `CODEXDASHBOARD_ARTIFACT_DIR` a `build/reports` o `build/previews` usando un percorso assoluto. Altrimenti vengono salvate in `%LOCALAPPDATA%/CodexDashboard/diagnostics`.
+Il widget legge le quote dall'accesso Codex già presente sul computer. Il giallo identifica la quota su cinque ore, il turchese quella settimanale. Passa sulle quote con il mouse per vedere il rinnovo in Europe/Rome. Se mancano dati, compare `—`; `!` e `OFFLINE` segnalano dati precedenti o un collegamento non disponibile.
 
-Il programma espone `--self-test`, `--settings-test`, `--verify`, `--preview`, `--config-preview` e `--deck-preview`. Verificano conversione quote, impostazioni, ridimensionamento, avvisi, collegamento reale e anteprime. Il test delle impostazioni usa una cartella separata senza cambiare il tuo avvio Windows.
+Nelle impostazioni puoi scegliere lingua, percentuali disponibili o consumate, monitor, posizione, soglie e frequenza di aggiornamento. **Applica** salva senza chiudere; **Salva** applica e chiude; **Annulla** scarta le modifiche non applicate. Avvio automatico e notifiche sono disattivati inizialmente.
 
-`tests/streamdeck-smoke.cjs` simula il collegamento Stream Deck, controlla registrazione, tre immagini PNG 144 × 144 e comando di aggiornamento. I risultati sono in `build/reports`.
+In Stream Deck aggiungi **Quota 5 ore**, **Quota settimana** e **Apri widget**. Premi un tasto quota per aggiornare. Ogni tasto può seguire le impostazioni dell'app oppure avere lingua, modalità e soglia personalizzate. Il plugin funziona anche con il widget chiuso.
 
-`tests/release-smoke.ps1` controlla anche Applica/Salva/Annulla, lingua, modalità di avvio, ingrandimenti, storico, impostazioni per tasto e corrispondenza dei file inclusi nell'installatore. I controlli che richiedono dispositivi e postazioni reali sono in [docs/VERIFICHE.md](docs/VERIFICHE.md). Le etichette della lista azioni inglese seguono il formato di [localizzazione Elgato](https://docs.elgato.com/streamdeck/sdk/guides/i18n/); la lingua dei tasti e del loro configuratore segue le impostazioni dell'app o la scelta per tasto.
+## Dati e riservatezza
 
-## Dati
+Il programma legge le quote attraverso `codex app-server`. Non invia prompt, non legge o copia i file di autenticazione e non consuma crediti di reset. Impostazioni e storico sono locali, in `%LOCALAPPDATA%/CodexDashboard`; la disinstallazione li conserva.
 
-Si usa `codex app-server --listen stdio://`, handshake initialize/initialized, lettura `account/rateLimits/read` e notifiche `account/rateLimits/updated`. Il bucket `codex` ha precedenza sul risultato legacy. Il programma non invia prompt, non legge o copia i file di autenticazione e non consuma crediti di reset. Il plugin comunica con Stream Deck sul WebSocket locale.
+Lo storico non registra dati di autenticazione. L'esportazione diagnostica contiene impostazioni, quote e ultimo errore di connessione, senza credenziali. Prima di allegarla a una issue pubblica, controlla comunque le informazioni che desideri condividere.
 
-Questa versione mostra le quote dell'abbonamento e il loro storico; non include costi o storico token. I dati provengono dalla lettura periodica e dagli aggiornamenti Codex.
+## Documentazione
 
-Documentazione: [Codex App Server](https://learn.chatgpt.com/docs/app-server), [manifest Stream Deck](https://docs.elgato.com/streamdeck/sdk/references/manifest/), [WebSocket Stream Deck](https://docs.elgato.com/streamdeck/sdk/references/websocket/plugin/).
+| Argomento | Italiano | English |
+| --- | --- | --- |
+| Uso, configurazione e compilazione | [Guida utente](docs/GUIDA.md) | [User guide](docs/USER_GUIDE.en.md) |
+| Organizzazione dei sorgenti | [Struttura](docs/STRUTTURA.md) | [Project structure](docs/STRUCTURE.en.md) |
+| Palette e regole visive | [Design](docs/DESIGN.md) | [Design guidelines](docs/DESIGN.en.md) |
+| Test e controlli su hardware reale | [Verifiche](docs/VERIFICHE.md) | [Verification](docs/VERIFICATION.en.md) |
+| Uso e sorgenti del logo | [Kit logo](assets/branding/LEGGIMI.md) | [Logo kit](assets/branding/README.en.md) |
+
+## Domande frequenti
+
+**Serve Stream Deck?** No. Il widget funziona da solo; il plugin è un componente facoltativo.
+
+**Perché vedo OFFLINE?** Controlla che Codex sia installato e autenticato, che la connessione sia disponibile e prova ad aggiornare. Per segnalare il problema, indica versione dell'app, versione di Windows e messaggio nella diagnostica.
+
+**Come aggiorno?** Scarica l'installer dalla pagina delle release. App e plugin vengono forniti nella stessa versione; l'importazione del plugin richiede conferma in Elgato. Gli aggiornamenti automatici online non sono ancora implementati.
+
+**Posso vedere costi e token esatti?** Questa milestone mostra quote percentuali e storico delle quote. Costi API e conteggi dei token non sono inclusi.
+
+## Sviluppo e richieste
+
+Per compilare, chiudi widget e configuratore ed esegui `./build.ps1` in PowerShell dalla cartella del progetto. Per pacchetto Stream Deck e installer usa `./build.ps1 -Installer -StreamDeckCli <percorso CLI Elgato>`. Consulta la guida per prerequisiti e verifiche.
+
+Per chiedere una modifica, apri una [issue](https://github.com/kentar91/CodexDashboard/issues) descrivendo l'esigenza, il comportamento desiderato e un esempio d'uso. Per i problemi, aggiungi i passaggi per riprodurli e il risultato atteso. Puoi scrivere in italiano o inglese. Le richieste vengono valutate dall'autore; ogni aggiornamento deve mantenere allineate entrambe le lingue.
+
+## Autore e licenza
+
+Creato e mantenuto da **Marco ([kentar91](https://github.com/kentar91))**. Codex Dashboard è distribuito con [licenza MIT](LICENSE), con avviso di copyright da conservare nelle copie e nelle distribuzioni.
